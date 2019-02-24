@@ -9,13 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [1.3.2] - 2019-02-24
+
+### Added
+  - Seamless installation of certutil dependency on Linux (only tested with apt)
+
 ## [1.3.1] - 2019-02-24
 
 ### Added
- - Binary; you can now install it globally and run it as nodecert
+ - Binary; you can now install it globally and run it as `nodecert`.
 
 ### Changed
-  - mkcert version no longer coupled to app version from package.json
+  - `mkcert` version no longer coupled to app version from _package.json_.
 
 ## [1.3.0] - 2019-02-24
 
