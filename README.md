@@ -9,16 +9,20 @@ You can use these certificates for local development without triggering self-sig
 
 For more details, [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
 
+## Installation
+
+1. [Install the prerequisite](#prerequisite)
+2. `npm i -g nodecert`
+
 ## Usage
 
 Make sure you have the prerequisite ([nss](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/tools/NSS_Tools_certutil)) installed.
 
 ```sh
-npm start
+nodecert
 ```
 
 Your certificates will be created in the _~/.nodecert_ directory.
-
 
 ## Prerequisite
 
@@ -37,3 +41,6 @@ For your certificate to work in Firefox:
   * [Homebrew](https://brew.sh/): `brew install nss`
   * [MacPorts](https://www.macports.org/): `sudo port install install nss`
 
+## Help wanted
+
+* Has not been tested on Windows (64-bit only). If anyone wants to give it a shot and let me know how/if it works, I’d appreciate it.
