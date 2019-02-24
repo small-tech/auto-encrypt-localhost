@@ -54,7 +54,7 @@ if (fs.existsSync(path.join(nodecertDir, 'rootCA.pem')) && fs.existsSync(path.jo
   if (!fs.existsSync(nodecertDir)) {
     fs.mkdirSync(nodecertDir)
   }
-  childProcess.execFile(mkcertBinary, ['-install'], {env: { CAROOT: nodecertDir, path: process.env.path},}, (error, stdout, stderr) => {
+  childProcess.execFile(mkcertBinary, ['-install'], {env: { CAROOT: nodecertDir, PATH: process.env.PATH},}, (error, stdout, stderr) => {
     console.log('error', error)
     console.log('stdout', stdout)
     console.log('stderr', stderr)
