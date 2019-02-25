@@ -49,7 +49,7 @@ module.exports = function () {
       process.exit(1)
     }
   } else {
-    console.log('📜 [nodecert] Local development TLS certificate exists.')
+    console.log(' 📜 [nodecert] Local development TLS certificate exists.')
   }
 }()
 
@@ -145,7 +145,7 @@ function ensurePrerequisite() {
     // install nss, we can use either Homebrew or Macports. If neither of
     // those are installed, we default to installing Homebrew and using that
     // to install nss.
-    console.log('Automatic nss/certutil installation on macOS has not been implemented yet. For instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/')
+    console.log('\n Automatic nss/certutil installation on macOS has not been implemented yet. For instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
     // TODO
   }
 }
