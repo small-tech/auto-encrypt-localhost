@@ -13,7 +13,7 @@ For more details, [see the mkcert README](https://github.com/FiloSottile/mkcert/
 ## Installation
 
 ```sh
-npm i -g nodecert
+npm i -g @ind.ie/nodecert
 ```
 
 (On macOS, you must [manually install the dependency](#macos-dependency) for now.)
