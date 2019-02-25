@@ -114,10 +114,10 @@ function installCertutilOnLinux() {
       options.env.DEBIAN_FRONTEND = 'noninteractive'
       childProcess.execSync('sudo apt-get install -y -q libnss3-tools', options)
     } else if (commandExists('yum')) {
-      // Untested.
+      // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
       childProcess.execSync('sudo yum install nss-tools', options)
     } else if (commandExists('pacman')) {
-      // Untested.
+      // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
       childProcess.execSync('sudo pacman -S nss', options)
     } else {
       throw new Error('No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run nodecert again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/')
