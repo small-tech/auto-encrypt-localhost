@@ -2,7 +2,8 @@
 
 A Node.js wrapper that uses the 64-bit [mkcert](https://github.com/FiloSottile/mkcert/) release binaries (Linux, macOS, Windows) to:
 
-  * Automatically install the _certutil_ dependecy on Linux on systems with apt, yum (untested), and pacman (untested)
+  * Automatically install the _certutil_ (nss) dependency on Linux on systems with apt, yum (untested), and pacman (untested)
+  * Automatically install the _certutil_ (nss) dependency on macOS if you have Homebrew installed. 
   * Create a root Certificate Authority
   * Create TLS certificates for localhost, 127.0.0.1, and ::1
 
@@ -28,16 +29,19 @@ Your certificates will be created in the _~/.nodecert_ directory.
 
 ## macOS Dependency
 
-For your certificate to work in Firefox:
+If you have [Homebrew](https://brew.sh) installed, the dependency will be automatically installed for you.
 
-  * [Homebrew](https://brew.sh/): `brew install nss`
-  * [MacPorts](https://www.macports.org/): `sudo port install install nss`
+If you use [MacPorts](https://www.macports.org/), you currently have to install the dependency manually:
+
+```sh
+sudo port install install nss
+```
 
 ## Help wanted
 
 * Has not been tested on Windows (64-bit only).
 * _certutil_ auto-installation has not been tested with yum.
 * _certutil_ auto-installation has not been tested with pacman.
-* _nss_ auto-installation not implemented yet on macOS.
+* _nss_ auto-installation implemented on macOS if you have Homebrew installed. Currently does not install Homebrew if you don’t. Installation via MacPorts is not implemented yet.
 
 If you want to give nodecert a shot on these platforms and [let me know how/if it works](https://github.com/indie-mirror/nodecert/issues), I’d appreciate it.
