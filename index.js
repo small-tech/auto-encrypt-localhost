@@ -16,7 +16,7 @@ module.exports = function () {
 
     // On Linux and on macOS, mkcert relies on the Mozilla nss library.
     // Make sure this is installed before continuing.
-    ensurePrerequisite()
+    ensureDependency()
 
     // Create the directory if it doesn’t already exist.
     if (!fs.existsSync(nodecertDir)) {
@@ -130,7 +130,7 @@ function installCertutilOnLinux() {
 
 // Mozilla’s nss is a prerequisite on Linux (for Chrome and Firefox)
 // and on macOS (for Firefox). Ensure it exists.
-function ensurePrerequisite() {
+function ensureDependency() {
   if (_platform === 'linux') {
     if (commandExists('certutil')) return
 
