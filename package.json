@@ -1,6 +1,6 @@
 {
   "name": "@ind.ie/nodecert",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "mkcert wrapper for Node.js",
   "main": "index.js",
   "bin": "bin/nodecert.js",

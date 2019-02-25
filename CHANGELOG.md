@@ -9,17 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [1.0.3] - 2019-02-25
+
+### Added
+
+  - Automatically install the _certutil_ (nss) dependency on macOS if you have MacPorts installed (untested).
+
+### Changed
+
+- A failure to install the optional dependency (nss/certutil) no longer kills the process but it reflected as a warning with instructions for installing it manually.
+- Updated instructions
+
 ## [1.0.2] - 2019-02-25
 
 ### Added
 
-  * Automatically install the _certutil_ (nss) dependency on macOS if you have Homebrew installed.
+  - Automatically install the _certutil_ (nss) dependency on macOS if you have Homebrew installed.
 
 ## [1.0.1] - 2019-02-25
 
 ### Added
 
-  * Cosmetic: minor formatting of output to match [https-server](https://source.ind.ie/hypha/tools/https-server)
+  - Cosmetic: minor formatting of output to match [https-server](https://source.ind.ie/hypha/tools/https-server)
 
 ## [1.0.0] - 2019-02-25
 

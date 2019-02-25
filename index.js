@@ -14,9 +14,10 @@ module.exports = function () {
   // Create certificates.
   if (!allOK()) {
 
-    // On Linux and on macOS, mkcert relies on the Mozilla nss library.
-    // Make sure this is installed before continuing.
-    ensureDependency()
+    // On Linux and on macOS, mkcert uses the Mozilla nss library.
+    // Try to install this automatically and warn the person if we can’t so
+    // that they can do it manually themselves.
+    tryToInstallTheDependency()
 
     // Create the directory if it doesn’t already exist.
     if (!fs.existsSync(nodecertDir)) {
@@ -104,10 +105,30 @@ function commandExists (command) {
 }
 
 
+// Mozilla’s nss is used on Linux to install the certificate in Chrome and Firefox
+// and on macOS for Firefox. Ensure it exists.
+// Source: https://github.com/FiloSottile/mkcert/blob/master/README.md#installation
+function tryToInstallTheDependency() {
+  if (_platform === 'linux') {
+    tryToInstallCertutilOnLinux()
+  } else if (_platform === 'darwin') {
+    tryToInstallCertutilOnDarwin()
+  } else if (_platform === 'win32') {
+    // Do nothing. According to the mkcert documentation, certutil is not
+    // required on Windows.
+  } else {
+    // Unknown platform. This should have been caught earlier. Panic.
+    throw new Error(' 🤯 Panic: Unknown platform detected.', _platform)
+  }
+}
+
+
 // On Linux, we must install nss for mkcert to work with both Chrome and Firefox.
 // Depending on the platform we try to do so using apt, yum, or pacman. If none of
 // those exist, we fail.
-function installCertutilOnLinux() {
+function tryToInstallCertutilOnLinux() {
+  if (commandExists('certutil')) return // Already installed
+
   let options = {env: process.env}
   try {
     if (commandExists('apt')) {
@@ -115,76 +136,65 @@ function installCertutilOnLinux() {
       childProcess.execSync('sudo apt-get install -y -q libnss3-tools', options)
     } else if (commandExists('yum')) {
       // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
+      console.log('\n 🤪  [nodecert] Attempting to install required dependency using yum. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo yum install nss-tools', options)
     } else if (commandExists('pacman')) {
       // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
+      console.log('\n 🤪  [nodecert] Attempting to install required dependency using pacman. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo pacman -S nss', options)
     } else {
-      throw new Error('No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run nodecert again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/')
+    // Neither Homebrew nor MacPorts is installed. Warn the person.
+    console.log('\n ⚠️  [nodecert] Linux: No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run nodecert again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
     }
   } catch (error) {
-    throw error
+    // There was an error and we couldn’t install the dependency. Warn the person.
+    console.log('\n ⚠️  [nodecert] Linux: Failed to install nss. Please install it manually and run nodecert again if you want your certificate to work in Chrome and Firefox', error)
   }
 }
 
 
-// Mozilla’s nss is a prerequisite on Linux (for Chrome and Firefox)
-// and on macOS (for Firefox). Ensure it exists.
-function ensureDependency() {
-  if (_platform === 'linux') {
-    if (commandExists('certutil')) return
+// On macOS, we install nss for mkcert to work with Firefox. To
+// install nss, we can use either Homebrew or Macports. 
+// If neither Homebrew or MacPorts is installed, we warn the person that
+// they need to install it manually if they want their certificates to work
+// in Firefox.
+function tryToInstallCertutilOnDarwin() {
+  const options = {env: process.env}
+  if (commandExists('brew')) {
+    // Check if nss installed using brew (we can’t just check using commandExists as
+    // nss is installed as keg-only and not symlinked to /usr/local due to issues
+    // with Firefox crashing).
+    try {
+      childProcess.execSync('brew list nss >/dev/null 2>&1', options)
+    } catch (error) {
+      // NSS is not installed. Install it.
+      try {
+        childProcess.execSync('brew install nss >/dev/null 2>&1', options)
+      } catch (error) {
+        console.log('\n ⚠️  [nodecert] macOS: Failed to install nss via Homebrew. Please install it manually and run nodecert again if you want your certificate to work in Firefox', error)
+        return
+      }
+    }
+  } else if (commandExists('port')) {
+    // Untested. This is based on the documentation at https://guide.macports.org/#using.port.installed. I don’t have MacPorts installed
+    // and it doesn’t play well with Homebrew so I won’t be testing this anytime soon. If you do, please let me know how it works
+    // by opening an issue on https://github.com/indie-mirror/https-server/issues
+    console.log('\n 🤪  [nodecert] Attempting to install required dependency using MacPorts. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
 
     try {
-      installCertutilOnLinux()
+      childProcess.execSync('port installed nss', options)
     } catch (error) {
-      console.log(error)
-      process.exit(1)
-    }
-  } else if (_platform === 'darwin') {
-    // On macOS, we must install nss for mkcert to work with Firefox. To
-    // install nss, we can use either Homebrew or Macports. If neither of
-    // those are installed, we default to installing Homebrew and using that
-    // to install nss.
-
-    // Check to see if we have brew or macports to work with (and install
-    // Homebrew, if not.)
-    let packageManager = null
-    if (commandExists('brew')) {
-      packageManager = 'brew'
-    } else if (commandExists('port')) {
-      console.log('MacPorts is installed.')
-      packageManager = 'macports'
-    } else {
-      console.log('Neither Homebrew nor Macports are installed. Installing Homebrew (todo)')
-      // TODO
-
-      // After
-
-      packageManager = 'brew'
-    }
-
-    // Check if nss is installed using the installed package manager.
-    if (packageManager === 'brew') {
-      // Check if nss installed using brew (we can’t just check using commandExists as
-      // nss is installed as keg-only and not symlinked to /usr/local due to issues
-      // with Firefox crashing).
+      // nss is not installed, attempt to install it using MacPorts.
       try {
-        childProcess.execSync('brew list nss >/dev/null 2>&1', {env: process.env})
+        childProcess.execSync('sudo port install nss', options)
       } catch (error) {
-        // NSS is not installed. Install it.
-        try {
-          childProcess.execSync('brew install nss >/dev/null 2>&1', {env: process.env})
-        } catch (error) {
-          console.log('Error while attempting to install required dependency (nss) with Homebrew. Please install the dependency manually and re-run this tool.')
-          process.exit(1)
-        }
+        console.log('\n ⚠️  [nodecert] macOS: Failed to install nss via MacPorts. Please install it manually and run nodecert again if you want your certificate to work in Firefox', error)
+        return
       }
-    } else if (packageManager === 'macports') {
-      console.log('TODO: check if nss installed using macports - PANIC!')
-      process.exit(1)      
-    } else {
-      // This should not happen.
-      throw new Error(`Panic: Unknown state for package manager setting: ${packageManager}`)
     }
+  } else {
+    // Neither Homebrew nor MacPorts is installed. Warn the person.
+    console.log('\n ⚠️  [nodecert] macOS: Cannot install certutil (nss) as you don’t have Homebrew or MacPorts installed.\n\n If you want your certificate to work in Firefox, please install one of those package managers and then install nss manually:\n\n   * Homebrew (https://brew.sh): brew install nss\n   * MacPorts(https://macports.org): sudo port install nss\n')
+    return
   }
 }

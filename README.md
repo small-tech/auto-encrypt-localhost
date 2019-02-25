@@ -1,23 +1,31 @@
 # nodecert
 
-A Node.js wrapper that uses the 64-bit [mkcert](https://github.com/FiloSottile/mkcert/) release binaries (Linux, macOS, Windows) to:
+A Node.js wrapper for [mkcert](https://github.com/FiloSottile/mkcert/) that:
 
-  * Automatically install the _certutil_ (nss) dependency on Linux on systems with apt, yum (untested), and pacman (untested)
-  * Automatically install the _certutil_ (nss) dependency on macOS if you have Homebrew installed. 
-  * Create a root Certificate Authority
-  * Create TLS certificates for localhost, 127.0.0.1, and ::1
+  * Uses the 64-bit release binaries to support Linux, macOS, and Windows.
+  
+  * Automatically installs the _certutil_ (nss) dependency on Linux on systems with apt, yum (untested), and pacman (untested) and on macOS if you have [Homebrew](https://brew.sh) or [MacPorts](https://www.macports.org/) (untested) installed.
+  
+  * Creates a root Certificate Authority
+  
+  * Creates locally-trusted TLS certificates for localhost, 127.0.0.1, and ::1
+ 
 
 You can use these certificates for local development without triggering self-signed certificate errors.
 
-For more details, [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
+It should __just work™__ 🤞
+
+I’d appreciate it if you can [help me test it](#help-wanted) on untested platforms and package managers 🤗
+
+Want a local development server that uses nodecert? See [https-server](https://source.ind.ie/hypha/tools/https-server).
+
+For more details on how it all works, please [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
 
 ## Installation
 
 ```sh
 npm i -g @ind.ie/nodecert
 ```
-
-(On macOS, you must [manually install the dependency](#macos-dependency) for now.)
 
 ## Usage
 
@@ -27,21 +35,13 @@ nodecert
 
 Your certificates will be created in the _~/.nodecert_ directory.
 
-## macOS Dependency
-
-If you have [Homebrew](https://brew.sh) installed, the dependency will be automatically installed for you.
-
-If you use [MacPorts](https://www.macports.org/), you currently have to install the dependency manually:
-
-```sh
-sudo port install install nss
-```
-
 ## Help wanted
 
 * Has not been tested on Windows (64-bit only).
-* _certutil_ auto-installation has not been tested with yum.
-* _certutil_ auto-installation has not been tested with pacman.
-* _nss_ auto-installation implemented on macOS if you have Homebrew installed. Currently does not install Homebrew if you don’t. Installation via MacPorts is not implemented yet.
+* Linux: _certutil_ (nss) auto-installation has not been tested with yum.
+* Linux: _certutil_ (nss) auto-installation has not been tested with pacman.
+* macOS: _certutil_ (nss) auto-installation has not been tested with MacPorts.
 
-If you want to give nodecert a shot on these platforms and [let me know how/if it works](https://github.com/indie-mirror/nodecert/issues), I’d appreciate it.
+I can use your help in testing these out. Let me know if it works or blows up by [opening an issue on the GitHub mirror](https://github.com/indie-mirror/nodecert/issues). [Pull requests](https://github.com/indie-mirror/nodecert/pulls) are also [welcome](./CHANGELOG.md).
+
+Thanks in advance! 🤓👍 – [Aral](https://ar.al)
