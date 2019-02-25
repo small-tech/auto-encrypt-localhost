@@ -145,7 +145,46 @@ function ensureDependency() {
     // install nss, we can use either Homebrew or Macports. If neither of
     // those are installed, we default to installing Homebrew and using that
     // to install nss.
-    console.log('\n Automatic nss/certutil installation on macOS has not been implemented yet. For instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
-    // TODO
+
+    // Check to see if we have brew or macports to work with (and install
+    // Homebrew, if not.)
+    let packageManager = null
+    if (commandExists('brew')) {
+      packageManager = 'brew'
+    } else if (commandExists('port')) {
+      console.log('MacPorts is installed.')
+      packageManager = 'macports'
+    } else {
+      console.log('Neither Homebrew nor Macports are installed. Installing Homebrew (todo)')
+      // TODO
+
+      // After
+
+      packageManager = 'brew'
+    }
+
+    // Check if nss is installed using the installed package manager.
+    if (packageManager === 'brew') {
+      // Check if nss installed using brew (we can’t just check using commandExists as
+      // nss is installed as keg-only and not symlinked to /usr/local due to issues
+      // with Firefox crashing).
+      try {
+        childProcess.execSync('brew list nss >/dev/null 2>&1', {env: process.env})
+      } catch (error) {
+        // NSS is not installed. Install it.
+        try {
+          childProcess.execSync('brew install nss >/dev/null 2>&1', {env: process.env})
+        } catch (error) {
+          console.log('Error while attempting to install required dependency (nss) with Homebrew. Please install the dependency manually and re-run this tool.')
+          process.exit(1)
+        }
+      }
+    } else if (packageManager === 'macports') {
+      console.log('TODO: check if nss installed using macports - PANIC!')
+      process.exit(1)      
+    } else {
+      // This should not happen.
+      throw new Error(`Panic: Unknown state for package manager setting: ${packageManager}`)
+    }
   }
 }
