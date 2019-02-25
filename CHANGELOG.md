@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [1.0.1] - 2019-02-25
+
+### Added
+
+  * Cosmetic: minor formatting of output to match [https-server](https://source.ind.ie/hypha/tools/https-server)
+
 ## [1.0.0] - 2019-02-25
 
 Initial release.
