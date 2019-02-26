@@ -14,6 +14,8 @@ module.exports = function () {
   // Create certificates.
   if (!allOK()) {
 
+    console.log('\n 🆕 [nodecert] Setting up…')
+
     // On Linux and on macOS, mkcert uses the Mozilla nss library.
     // Try to install this automatically and warn the person if we can’t so
     // that they can do it manually themselves.
@@ -33,27 +35,38 @@ module.exports = function () {
 
     try {
       // Create the local certificate authority.
+      console.log(' 🖊  [nodecert] Creating local certificate authority (local CA) using mkcert…\n')
+      console.log('__(mkcert)____________________________________________________________________________________________________________\n')
       childProcess.execFileSync(mkcertBinary, ['-install'], options)
+      console.log('──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n')
 
       // Create the local certificate.
+      console.log(' 📜 [nodecert] Creating TLS certificates using mkcert…\n')
       const createCertificateArguments = [
         `-key-file=${path.join(nodecertDir, 'localhost-key.pem')}`,
         `-cert-file=${path.join(nodecertDir, 'localhost.pem')}`,
         'localhost', '127.0.0.1', '::1'
       ]
+      console.log('__(mkcert)____________________________________________________________________________________________________________\n')
       childProcess.execFileSync(mkcertBinary, createCertificateArguments, options)
+      console.log('──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n')
     } catch (error) {
-      console.log(error)
+      console.log('\n', error)
     }
 
     if (!allOK()) {
       process.exit(1)
     }
   } else {
-    console.log(' 📜 [nodecert] Local development TLS certificate exists.')
+    console.log('\n 📜 [nodecert] Local development TLS certificate exists.\n')
   }
 }()
 
+
+// Write to stdout without a newline
+function print(str) {
+  process.stdout.write(str)
+}
 
 // Check if the local certificate authority and local keys exist.
 function allOK() {
@@ -118,7 +131,7 @@ function tryToInstallTheDependency() {
     // required on Windows.
   } else {
     // Unknown platform. This should have been caught earlier. Panic.
-    throw new Error(' 🤯 Panic: Unknown platform detected.', _platform)
+    throw new Error(' 🤯 [nodecert] Panic: Unknown platform detected.', _platform)
   }
 }
 
@@ -129,19 +142,23 @@ function tryToInstallTheDependency() {
 function tryToInstallCertutilOnLinux() {
   if (commandExists('certutil')) return // Already installed
 
+  print(' 🌠 [nodecert] Installing certutil dependency (Linux) ')
   let options = {env: process.env}
   try {
     if (commandExists('apt')) {
+      print('using apt… \n')
       options.env.DEBIAN_FRONTEND = 'noninteractive'
       childProcess.execSync('sudo apt-get install -y -q libnss3-tools', options)
     } else if (commandExists('yum')) {
       // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
       console.log('\n 🤪  [nodecert] Attempting to install required dependency using yum. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo yum install nss-tools', options)
+      console.log(' ✅ [nodecert] Certutil installed using yum.')
     } else if (commandExists('pacman')) {
       // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
       console.log('\n 🤪  [nodecert] Attempting to install required dependency using pacman. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo pacman -S nss', options)
+      console.log(' ✅ [nodecert] Certutil installed using pacman.')
     } else {
     // Neither Homebrew nor MacPorts is installed. Warn the person.
     console.log('\n ⚠️  [nodecert] Linux: No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run nodecert again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
@@ -154,22 +171,28 @@ function tryToInstallCertutilOnLinux() {
 
 
 // On macOS, we install nss for mkcert to work with Firefox. To
-// install nss, we can use either Homebrew or Macports. 
+// install nss, we can use either Homebrew or Macports.
 // If neither Homebrew or MacPorts is installed, we warn the person that
 // they need to install it manually if they want their certificates to work
 // in Firefox.
 function tryToInstallCertutilOnDarwin() {
   const options = {env: process.env}
+
   if (commandExists('brew')) {
     // Check if nss installed using brew (we can’t just check using commandExists as
     // nss is installed as keg-only and not symlinked to /usr/local due to issues
     // with Firefox crashing).
     try {
+      // Homebrew can take a long time start, show current status.
+      print(' 🔍 [nodecert] Checking if certutil dependency is installed (Darwin) using Homebrew… ')
       childProcess.execSync('brew list nss >/dev/null 2>&1', options)
+      console.log(' ok.')
     } catch (error) {
       // NSS is not installed. Install it.
       try {
+        print('\n 🌠 [nodecert] Installing certutil dependency (Darwin) using Homebrew… ')
         childProcess.execSync('brew install nss >/dev/null 2>&1', options)
+        console.log('done.')
       } catch (error) {
         console.log('\n ⚠️  [nodecert] macOS: Failed to install nss via Homebrew. Please install it manually and run nodecert again if you want your certificate to work in Firefox', error)
         return
