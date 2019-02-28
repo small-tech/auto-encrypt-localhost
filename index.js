@@ -167,8 +167,6 @@ function tryToInstallCertutilOnLinux() {
       childProcess.execSync('sudo yum install nss-tools', options)
       console.log(' ✅ [nodecert] Certutil installed using yum.')
     } else if (commandExists('pacman')) {
-      // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
-      console.log('\n 🤪  [nodecert] Attempting to install required dependency using pacman. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo pacman -S nss', options)
       console.log(' ✅ [nodecert] Certutil installed using pacman.')
     } else {
