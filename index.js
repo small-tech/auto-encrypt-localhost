@@ -10,6 +10,8 @@ const homeDir = os.homedir()
 const nodecertDir = path.join(homeDir, '.nodecert')
 const mkcertBinary = mkcertBinaryForThisMachine()
 
+const syswidecas = require('syswide-cas')
+
 module.exports = function () {
   // Create certificates.
   if (!allOK()) {
@@ -60,6 +62,8 @@ module.exports = function () {
   } else {
     console.log('\n 📜 [nodecert] Local development TLS certificate exists.\n')
   }
+
+  addRootStoreToNode()
 }()
 
 
@@ -68,9 +72,17 @@ function print(str) {
   process.stdout.write(str)
 }
 
+
 // Check if the local certificate authority and local keys exist.
 function allOK() {
   return fs.existsSync(path.join(nodecertDir, 'rootCA.pem')) && fs.existsSync(path.join(nodecertDir, 'rootCA-key.pem')) && fs.existsSync(path.join(nodecertDir, 'localhost.pem')) && fs.existsSync(path.join(nodecertDir, 'localhost-key.pem'))
+}
+
+
+// Ensure that node recognises the certificates (e.g., when using https.get(), etc.)
+function addRootStoreToNode () {
+  const nodeCertRootCA = path.join(homeDir, '.nodecert', 'rootCA.pem')
+  syswidecas.addCAs(nodeCertRootCA)
 }
 
 

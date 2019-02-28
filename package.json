@@ -16,5 +16,8 @@
     "email": "aral@ind.ie",
     "url": "https://ar.al"
   },
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "syswide-cas": "^5.3.0"
+  }
 }
