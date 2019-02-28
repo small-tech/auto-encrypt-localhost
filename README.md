@@ -36,7 +36,6 @@ Your certificates will be created in the _~/.nodecert_ directory.
 
 ## Help wanted
 
-* Has not been tested on Windows (64-bit only).
 * Linux: _certutil_ (nss) auto-installation has not been tested with yum.
 * macOS: _certutil_ (nss) auto-installation has not been tested with MacPorts.
 

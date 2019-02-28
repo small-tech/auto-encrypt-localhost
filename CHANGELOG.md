@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [1.0.6] - 2019-02-28
+
+## Changed
+
+  - Has been tested with pacman on Arch Linux. No longer displays warning/request for help.
+  - Has been tested to work on 64-bit Windows.
+
 ## [1.0.5] - 2019-02-28
 
 ## Added
