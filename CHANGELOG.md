@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [1.0.5] - 2019-02-28
+
+## Added
+
+  - Adds certificates to Node.js so you can use them with, e.g., https.get(), etc. (Node.js does not use the system store.)
+
 ## [1.0.4] - 2019-02-26
+
+## Added
 
   - Add progress indication
 
