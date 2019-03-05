@@ -12,7 +12,8 @@ const mkcertBinary = mkcertBinaryForThisMachine()
 
 const syswidecas = require('syswide-cas')
 
-module.exports = function () {
+module.exports = function (nodecertOptions = {}) {
+
   // Create certificates.
   if (!allOK()) {
 
@@ -44,11 +45,18 @@ module.exports = function () {
 
       // Create the local certificate.
       console.log(' 📜 [nodecert] Creating TLS certificates using mkcert…\n')
-      const createCertificateArguments = [
+      let createCertificateArguments = [
         `-key-file=${path.join(nodecertDir, 'localhost-key.pem')}`,
         `-cert-file=${path.join(nodecertDir, 'localhost.pem')}`,
         'localhost', '127.0.0.1', '::1'
       ]
+
+      // If any additional domains have been passed (for example, ngrok staging domains),
+      // add those to the arguments list.
+      if (nodecertOptions.domains !== undefined && nodecertOptions.domains instanceof Array === true) {
+        createCertificateArguments = createCertificateArguments.concat(nodecertOptions.domains)
+      }
+
       console.log('__(mkcert)____________________________________________________________________________________________________________\n')
       childProcess.execFileSync(mkcertBinary, createCertificateArguments, options)
       console.log('──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n')
@@ -64,7 +72,7 @@ module.exports = function () {
   }
 
   addRootStoreToNode()
-}()
+}
 
 
 // Write to stdout without a newline
