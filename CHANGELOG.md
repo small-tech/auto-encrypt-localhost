@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [2.0.1] - 2019-03-09
+
+## Fixed
+  - Capitalised app name in readme.
+  - Bumped version to republish due to npm error: `"Unable to find a readme for @ind.ie/nodecert@2.0.0"`
+
 ## [2.0.0] - 2019-03-09
 
 ## Changed
