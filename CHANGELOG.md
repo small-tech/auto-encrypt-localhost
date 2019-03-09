@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [2.0.0] - 2019-03-09
+
+## Changed
+
+  - API: (Breaking change) You now have to execute the exported function to run Nodecert. This allows for conditional usage.
+
 ## [1.0.6] - 2019-02-28
 
 ## Changed

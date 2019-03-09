@@ -64,7 +64,7 @@ module.exports = function () {
   }
 
   addRootStoreToNode()
-}()
+}
 
 
 // Write to stdout without a newline

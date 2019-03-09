@@ -28,11 +28,19 @@ npm i -g @ind.ie/nodecert
 
 ## Usage
 
+### Command-line interface
+
 ```sh
 nodecert
 ```
 
 Your certificates will be created in the _~/.nodecert_ directory.
+
+### API
+
+```js
+require('@ind.ie/nodecert')()
+```
 
 ## Help wanted
 
