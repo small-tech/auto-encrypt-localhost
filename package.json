@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "tape": "^4.10.1"
+  },
+  "pkg": {
+    "assets": "mkcert-bin/*"
   }
 }
