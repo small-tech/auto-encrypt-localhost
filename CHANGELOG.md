@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [2.1.0] - TBR
+
+  - Add pkg support.
+
+## [2.0.2] - ?
+
+  - Cosmetic: capitalised Nodecert name in console logs and removed newlines.
+
 ## [2.0.1] - 2019-03-09
 
 ## Fixed
