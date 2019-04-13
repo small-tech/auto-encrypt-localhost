@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
-## [2.2.0] - 2019-04-13
+## [3.0.0] - 2019-04-13
 
 ### Added
 
-  - Add [nexe](https://github.com/nexe/nexe/) support. The mkcert binary is now copied to an external directory and executed from there as nexe cannot call execSync on bundled resources. You must still add the binaries to your list of resources when building your nexe executable.
+  - Add [nexe](https://github.com/nexe/nexe/) support. The mkcert binary is now copied to an external directory and executed from there as nexe cannot call execSync on bundled resources. You must still add the binaries to your list of resources when building your nexe executable. Bumping major version even though this isn’t a breaking change as it does add a tiny bit of processing overhead so if you were using version 2.x.x, you should make a decision about whether you want to update manually.
 
 ### Changed
 
