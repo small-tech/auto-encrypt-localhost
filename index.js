@@ -51,7 +51,7 @@ module.exports = function () {
         'localhost', '127.0.0.1', '::1'
       ]
       childProcess.execFileSync(mkcertBinary, createCertificateArguments, options)
-      console.log(' 🎉 [Nodecert] Local TLS certificates created.\n')
+      console.log(' 🎉 [Nodecert] Local TLS certificates created.')
     } catch (error) {
       console.log('\n', error)
     }

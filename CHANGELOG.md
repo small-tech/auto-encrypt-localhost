@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.0.1] - 2019-04-13
+
+### Changed
+
+  - Cosmetic: remove newline after second success message so output looks better in Indie Web Server.
+
 ## [3.0.0] - 2019-04-13
 
 ### Added
