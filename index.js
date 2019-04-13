@@ -108,14 +108,29 @@ function mkcertBinaryForThisMachine() {
 
   const mkcertVersion = '1.3.0'
 
-  let mkcertBinary = path.join(__dirname, 'mkcert-bin', `mkcert-v${mkcertVersion}-${platform}-${architecture}`)
+  const mkcertBinaryName = `mkcert-v${mkcertVersion}-${platform}-${architecture}`
+  const mkcertBinaryRelativePath = path.join('mkcert-bin', mkcertBinaryName)
+  let mkcertBinaryInternalPath = path.join(__dirname, mkcertBinaryRelativePath)
 
-  if (platform === 'windows') mkcertBinary += '.exe'
+  if (platform === 'windows') mkcertBinaryInternalPath += '.exe'
 
   // Check if the platform + architecture combination is supported.
-  if (!fs.existsSync(mkcertBinary)) throw new Error(`Unsupported platform + architecture combination for ${platform}-${architecture}`)
+  if (!fs.existsSync(mkcertBinaryInternalPath)) throw new Error(`Unsupported platform + architecture combination for ${platform}-${architecture}`)
 
-  return mkcertBinary
+  // Copy the mkcert binary to the external Nodecert directory so that we can call execSync() on it if
+  // the app using this module is wrapped into an executable using Nexe (https://github.com/nexe/nexe) – like
+  // Indie Web Server (https://ind.ie/web-server) is, for example. We use readFileSync() and writeFileSync() as
+  // Nexe does not support copyFileSync() yet (see https://github.com/nexe/nexe/issues/607).
+  const mkcertBinaryExternalPath = path.join(nodecertDir, mkcertBinaryName)
+
+  try {
+    const mkcertBuffer = fs.readFileSync(mkcertBinaryInternalPath, 'binary')
+    fs.writeFileSync(mkcertBinaryExternalPath, mkcertBuffer, {encoding: 'binary', mode: 0o755})
+  } catch (error) {
+    throw new Error(' 🤯 [Nodecert] Panic: Could not copy mkcert to external directory.', error)
+  }
+
+  return mkcertBinaryExternalPath
 }
 
 
