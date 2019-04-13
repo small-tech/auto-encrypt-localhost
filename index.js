@@ -8,7 +8,6 @@ const _architecture = os.arch()
 
 const homeDir = os.homedir()
 const nodecertDir = path.join(homeDir, '.nodecert')
-const mkcertBinary = mkcertBinaryForThisMachine()
 
 const syswidecas = require('syswide-cas')
 
@@ -18,40 +17,41 @@ module.exports = function () {
 
     console.log('\n 🆕 [Nodecert] Setting up…')
 
-    // On Linux and on macOS, mkcert uses the Mozilla nss library.
-    // Try to install this automatically and warn the person if we can’t so
-    // that they can do it manually themselves.
-    tryToInstallTheDependency()
-
     // Create the directory if it doesn’t already exist.
     if (!fs.existsSync(nodecertDir)) {
       fs.mkdirSync(nodecertDir)
     }
 
+    // Get a path to the mkcert binary for this machine.
+    const mkcertBinary = mkcertBinaryForThisMachine()
+
+    // On Linux and on macOS, mkcert uses the Mozilla nss library.
+    // Try to install this automatically and warn the person if we can’t so
+    // that they can do it manually themselves.
+    tryToInstallTheDependency()
+
     // mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
     // We also pass the rest of the system environment to the spawned processes.
     const options = {
-      env: process.env
+      env: process.env,
+      stdio: 'pipe'     // suppress output
     }
     options.env.CAROOT = nodecertDir
 
     try {
       // Create the local certificate authority.
-      console.log(' 🖊  [Nodecert] Creating local certificate authority (local CA) using mkcert…\n')
-      console.log('__(mkcert)____________________________________________________________________________________________________________\n')
+      console.log(' 🖊  [Nodecert] Creating local certificate authority (local CA) using mkcert…')
       childProcess.execFileSync(mkcertBinary, ['-install'], options)
-      console.log('──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n')
-
+      console.log(' 🎉 [Nodecert] Local certificate authority created.\n')
       // Create the local certificate.
-      console.log(' 📜 [Nodecert] Creating TLS certificates using mkcert…\n')
+      console.log(' 📜 [Nodecert] Creating local TLS certificates using mkcert…')
       const createCertificateArguments = [
         `-key-file=${path.join(nodecertDir, 'localhost-key.pem')}`,
         `-cert-file=${path.join(nodecertDir, 'localhost.pem')}`,
         'localhost', '127.0.0.1', '::1'
       ]
-      console.log('__(mkcert)____________________________________________________________________________________________________________\n')
       childProcess.execFileSync(mkcertBinary, createCertificateArguments, options)
-      console.log('──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n')
+      console.log(' 🎉 [Nodecert] Local TLS certificates created.\n')
     } catch (error) {
       console.log('\n', error)
     }
@@ -127,7 +127,7 @@ function mkcertBinaryForThisMachine() {
     const mkcertBuffer = fs.readFileSync(mkcertBinaryInternalPath, 'binary')
     fs.writeFileSync(mkcertBinaryExternalPath, mkcertBuffer, {encoding: 'binary', mode: 0o755})
   } catch (error) {
-    throw new Error(' 🤯 [Nodecert] Panic: Could not copy mkcert to external directory.', error)
+    throw new Error(` 🤯 [Nodecert] Panic: Could not copy mkcert to external directory: ${error.message}`)
   }
 
   return mkcertBinaryExternalPath
@@ -180,10 +180,10 @@ function tryToInstallCertutilOnLinux() {
       // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
       console.log('\n 🤪  [Nodecert] Attempting to install required dependency using yum. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo yum install nss-tools', options)
-      console.log(' ✅ [Nodecert] Certutil installed using yum.')
+      console.log(' 🎉 [Nodecert] Certutil installed using yum.')
     } else if (commandExists('pacman')) {
       childProcess.execSync('sudo pacman -S nss', options)
-      console.log(' ✅ [Nodecert] Certutil installed using pacman.')
+      console.log(' 🎉 [Nodecert] Certutil installed using pacman.')
     } else {
     // Neither Homebrew nor MacPorts is installed. Warn the person.
     console.log('\n ⚠️  [Nodecert] Linux: No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run nodecert again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
