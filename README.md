@@ -36,6 +36,12 @@ nodecert
 
 Your certificates will be created in the _~/.nodecert_ directory.
 
+## Caveats
+
+### Windows
+
+Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores)
+
 ### API
 
 ```js
