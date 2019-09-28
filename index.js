@@ -106,7 +106,7 @@ function mkcertBinaryForThisMachine() {
   if (platform === undefined) throw new Error('Unsupported platform', _platform)
   if (architecture === undefined) throw new Error('Unsupported architecture', _architecture)
 
-  const mkcertVersion = '1.3.0'
+  const mkcertVersion = '1.4.0'
 
   const mkcertBinaryName = `mkcert-v${mkcertVersion}-${platform}-${architecture}`
   const mkcertBinaryRelativePath = path.join('mkcert-bin', mkcertBinaryName)

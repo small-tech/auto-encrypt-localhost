@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.1.0] - 2019-09-28
+
+### Changed
+
+  - Update from mkcert 1.3.0 binaries to 1.4.0. Adds macOS Catalina support.
+
 ## [3.0.1] - 2019-04-13
 
 ### Changed
