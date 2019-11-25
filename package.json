@@ -1,6 +1,6 @@
 {
   "name": "@ind.ie/nodecert",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Automatically provision and use locally-trusted TLS certificates in Node.js using mkcert.",
   "main": "index.js",
   "bin": "bin/nodecert.js",

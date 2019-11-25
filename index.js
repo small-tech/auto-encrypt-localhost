@@ -12,7 +12,7 @@ const syswidecas = require('syswide-cas')
 
 let nodecertDir
 
-module.exports = function (_nodecertDir = path.join(homeDir, '.nodecert')) {
+module.exports = function (_nodecertDir = path.join(homeDir, '.small-tech.org', 'nodecert')) {
 
   nodecertDir = _nodecertDir
 

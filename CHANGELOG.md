@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.1.2] - 2019-11-25
+
+### Changed
+
+  - The configuration folder is now under ~/.small-tech.org namespace.
+
+### Fixed
+
+  - The tests now actually check that local certificates are created at the custom directory instead of running the first set of tests again.
+
 ## [3.1.1] - 2019-11-25
 
 ### Added

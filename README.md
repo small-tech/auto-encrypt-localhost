@@ -16,9 +16,9 @@ It should __just work™__ 🤞
 
 I’d appreciate it if you can [help me test it](#help-wanted) on untested platforms and package managers 🤗
 
-Want a local development server that uses nodecert? See [https-server](https://source.ind.ie/hypha/tools/https-server).
+Nodecert is used in [Site.js](https://sitejs.org), a personal web tool for human beings (not startups or enterprises) that lets you develop, test, and deploy your secure static or dynamic personal web site with zero configuration.
 
-For more details on how it all works, please [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
+For more details on how nodecert works behind the scenes, please [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
 
 ## Installation
 
@@ -34,7 +34,7 @@ npm i -g @ind.ie/nodecert
 nodecert
 ```
 
-Your certificates will be created in the _~/.nodecert_ directory.
+Your certificates will be created in the _~/.small-tech.org/nodecert_ directory.
 
 ## Caveats
 
@@ -48,7 +48,7 @@ Locally-trusted certificates do not work under Firefox. Please use Edge or Chrom
 require('@ind.ie/nodecert')()
 ```
 
-__As of version 3.1.1,__ you can now pass a custom directory for nodecert to use instead of the default (`~/.nodecert`) and the created certificates will be stored there.
+__As of version 3.1.1,__ you can now pass a custom directory for nodecert to use instead of the default (`~/.small-tech.org/nodecert`) and the created certificates will be stored there.
 
 For example:
 
