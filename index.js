@@ -7,11 +7,15 @@ const _platform = os.platform()
 const _architecture = os.arch()
 
 const homeDir = os.homedir()
-const nodecertDir = path.join(homeDir, '.nodecert')
 
 const syswidecas = require('syswide-cas')
 
-module.exports = function () {
+let nodecertDir
+
+module.exports = function (_nodecertDir = path.join(homeDir, '.nodecert')) {
+
+  nodecertDir = _nodecertDir
+
   // Create certificates.
   if (!allOK()) {
 

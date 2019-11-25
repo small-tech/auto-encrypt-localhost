@@ -48,6 +48,20 @@ Locally-trusted certificates do not work under Firefox. Please use Edge or Chrom
 require('@ind.ie/nodecert')()
 ```
 
+__As of version 3.1.1,__ you can now pass a custom directory for nodecert to use instead of the default (`~/.nodecert`) and the created certificates will be stored there.
+
+For example:
+
+```js
+const os = require('os)
+const path = require('path')
+const nodecert = require('@ind.ie/nodecert')
+
+const customDirectory = path.join(os.homedir(), '.my-app', 'tls', 'local')
+
+nodecert(customDirectory)
+```
+
 ## Help wanted
 
 * Linux: _certutil_ (nss) auto-installation has not been tested with yum.

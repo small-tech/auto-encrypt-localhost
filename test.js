@@ -20,9 +20,9 @@ function rmRFSync (dirPath) {
 }
 
 test('certificate creation', t => {
-  t.plan(5)
+  t.plan(10)
 
-  const nodecertDirectory = path.join(os.homedir(), '.nodecert')
+  let nodecertDirectory = path.join(os.homedir(), '.nodecert')
   if (fs.existsSync(nodecertDirectory)) {
     // Clear the .nodecert directory if it already exists.
     rmRFSync(nodecertDirectory)
@@ -36,6 +36,14 @@ test('certificate creation', t => {
   t.ok(fs.existsSync(path.join(nodecertDirectory, 'rootCA-key.pem')), 'Local certificate authority private key exists')
   t.ok(fs.existsSync(path.join(nodecertDirectory, 'localhost.pem')), 'Local certificate exists')
   t.ok(fs.existsSync(path.join(nodecertDirectory, 'localhost-key.pem')), 'Local certificate private key exists')
+
+  nodecert(path.join(os.homedir(), '.nodecert-test'))
+
+  t.ok(fs.existsSync(path.join(nodecertDirectory)), '(Custom path) Main nodecert directory exists')
+  t.ok(fs.existsSync(path.join(nodecertDirectory, 'rootCA.pem')), '(Custom path) Local certificate authority exists')
+  t.ok(fs.existsSync(path.join(nodecertDirectory, 'rootCA-key.pem')), '(Custom path) Local certificate authority private key exists')
+  t.ok(fs.existsSync(path.join(nodecertDirectory, 'localhost.pem')), '(Custom path) Local certificate exists')
+  t.ok(fs.existsSync(path.join(nodecertDirectory, 'localhost-key.pem')), '(Custom path) Local certificate private key exists')
 
   t.end()
 })

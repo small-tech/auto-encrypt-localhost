@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.1.1] - 2019-11-25
+
+### Added
+
+  - Function now takes node certificate directory as its only parameter. Defaults to old default directory.
+
 ## [3.1.0] - 2019-09-28
 
 ### Changed
