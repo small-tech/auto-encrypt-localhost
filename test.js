@@ -41,7 +41,7 @@ test('certificate creation', t => {
   // Custom nodecert directory.
   //
 
-  nodecertDirectory = path.join(os.homedir(), '.small-tech.org', 'nodecert-custom-directory-test')
+  nodecertDirectory = path.join(os.homedir(), '.small-tech.org', 'nodecert-custom-directory-test', 'second-level-directory')
   if (fs.existsSync(nodecertDirectory)) {
     // Clear the .nodecert directory if it already exists.
     rmRFSync(nodecertDirectory)

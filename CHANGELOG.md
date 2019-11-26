@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.1.3] - 2019-11-26
+
+### Fixed
+
+  - No longer crashes if multiple directories do not exist in the requested nodecert path.
+
 ## [3.1.2] - 2019-11-25
 
 ### Changed

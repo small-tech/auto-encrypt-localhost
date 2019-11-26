@@ -1,6 +1,6 @@
 const os = require('os')
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 const childProcess = require('child_process')
 
 const _platform = os.platform()
@@ -21,10 +21,8 @@ module.exports = function (_nodecertDir = path.join(homeDir, '.small-tech.org', 
 
     console.log('\n 🆕 [Nodecert] Setting up…')
 
-    // Create the directory if it doesn’t already exist.
-    if (!fs.existsSync(nodecertDir)) {
-      fs.mkdirSync(nodecertDir)
-    }
+    // Ensure the nodecert directory exists.
+    fs.ensureDirSync(nodecertDir)
 
     // Get a path to the mkcert binary for this machine.
     const mkcertBinary = mkcertBinaryForThisMachine()
