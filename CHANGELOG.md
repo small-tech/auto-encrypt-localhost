@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.1.4] - 2019-11-26
+
+### Fixed
+
+  - Fix regression: Node.js once again recognises nodecert certificates.
+
 ## [3.1.3] - 2019-11-26
 
 ### Fixed

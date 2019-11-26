@@ -83,7 +83,7 @@ function allOK() {
 
 // Ensure that node recognises the certificates (e.g., when using https.get(), etc.)
 function addRootStoreToNode () {
-  const nodeCertRootCA = path.join(homeDir, '.nodecert', 'rootCA.pem')
+  const nodeCertRootCA = path.join(nodecertDir, 'rootCA.pem')
   syswidecas.addCAs(nodeCertRootCA)
 }
 
