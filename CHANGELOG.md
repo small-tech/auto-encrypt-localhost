@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.1.5] - 2020-02-09
+
+### Changed
+
+  - Updated console output formatting to match what’s used in Site.js.
+
 ## [3.1.4] - 2019-11-26
 
 ### Fixed
