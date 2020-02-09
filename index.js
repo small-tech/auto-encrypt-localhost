@@ -19,7 +19,7 @@ module.exports = function (_nodecertDir = path.join(homeDir, '.small-tech.org', 
   // Create certificates.
   if (!allOK()) {
 
-    console.log('\n   📜    ❨Nodecert❩ Setting up…')
+    console.log('   📜    ❨Nodecert❩ Setting up…')
 
     // Ensure the nodecert directory exists.
     fs.ensureDirSync(nodecertDir)
@@ -217,7 +217,7 @@ function tryToInstallCertutilOnDarwin() {
     } catch (error) {
       // NSS is not installed. Install it.
       try {
-        print('\n   📜    ❨Nodecert❩ Installing certutil dependency (Darwin) using Homebrew… ')
+        print('   📜    ❨Nodecert❩ Installing certutil dependency (Darwin) using Homebrew… ')
         childProcess.execSync('brew install nss >/dev/null 2>&1', options)
         console.log('done.')
       } catch (error) {
