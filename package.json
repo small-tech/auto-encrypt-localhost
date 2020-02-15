@@ -1,12 +1,12 @@
 {
   "name": "@ind.ie/nodecert",
-  "version": "3.1.7",
+  "version": "3.2.0",
   "description": "Automatically provision and use locally-trusted TLS certificates in Node.js using mkcert.",
   "main": "index.js",
   "bin": "bin/nodecert.js",
   "scripts": {
     "start": "node index.js",
-    "test": "tape test.js"
+    "test": "QUIET=true tape test.js"
   },
   "repository": {
     "type": "git",

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [3.2.0] - 2020-02-15
+
+### Added
+
+  - Support for QUIET=true environment variable to silence console output.
+
 ## [3.1.7] - 2020-02-09
 
 ### Fixed
