@@ -69,6 +69,7 @@ Auto Encrypt Localhost generates a locally-trusted private key and certificate u
 
 ```js
 const options = { /* your other https server options go here */ }
+
 const server = https.createServer(autoEncryptLocalhost({ options }), (request, response) => {
   response.end('Hello, world!')
 })
@@ -81,7 +82,10 @@ By default, Auto Encrypt Localhost creates and uses the _~/.small-tech.org/auto-
 ```js
 const os = require('os')
 const path = require('path')
+const https = require('https')
+
 const settingsPath = path.join(os.homedir(), '.my-namespace', 'magic-localhost-certificates')
+
 const server = https.createServer(autoEncryptLocalhost({ settingsPath }), (request, response) => {
   response.end('Hello, world!')
 })
