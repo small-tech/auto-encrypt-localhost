@@ -1,14 +1,14 @@
 # Auto Encrypt Localhost
 
-Automatically provision trusted development-time (localhost) certificates in Node.js without browser errors via mkcert.
+Automatically provisions trusted localhost TLS certificates via [mkcert](https://github.com/FiloSottile/mkcert/) for development without browser security warnings in Node.js.
 
-## Install
+## Installation
 
 ```sh
 npm i @small-tech/auto-encrypt-localhost
 ```
 
-## Use
+## Usage
 
 ```js
 // Create an https server using locally-trusted certificates.
@@ -39,7 +39,7 @@ This is [small technology](https://small-tech.org/about/#small-technology).
 
 If you’re evaluating this for a “startup” or an enterprise, let us save you some time: this is not the right tool for you. This tool is for individual developers to build personal web sites and apps for themselves and for others in a non-colonial manner that respects the human rights of the people who use them.
 
-## Details
+## How it works
 
 Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/FiloSottile/mkcert/) that:
 
@@ -53,15 +53,11 @@ Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/Filo
 
 You can use these certificates for local development without triggering self-signed certificate errors.
 
-It should __Just Work™__ 🤞
-
-Auto Encrypt Localhost is used in [Site.js](https://sitejs.org), a personal web tool for human beings (not startups or enterprises) that lets you develop, test, and deploy your secure static or dynamic personal web site with zero configuration.
-
 For more details on how Auto Encrypt Localhost works behind the scenes, please [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
 
-## Advanced usage
+## Detailed usage
 
-Auto Encrypt Localhost is exposed as a function and it accepts an optional parameter object with optional `options` and `settingsPath` properties. The defaults for both are shown below.
+Auto Encrypt Localhost is exported as a function that accepts an optional parameter object with optional `options` and `settingsPath` properties. The defaults for both are shown below.
 
 ```js
 autoEncryptLocalhost({ options: {}, settingsPath: '~/.small-tech.org/auto-encrypt-localhost' })
@@ -113,28 +109,6 @@ Your certificates will be created in the _~/.small-tech.org/auto-encrypt-localho
 ### Windows
 
 Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores)
-
-### API
-
-```js
-require('@small-tech/auto-encrypt-localhost')()
-```
-
-Note that Auto Encrypt Localhost is _synchronous_. It will block your main thread. It is designed to be run before you initialise your app’s web server.
-
-__As of version 3.1.1,__ you can now pass a custom directory for Auto Encrypt Localhost to use instead of the default (`~/.small-tech.org/auto-encrypt-localhost`) directory and the created certificates will be stored there.
-
-For example:
-
-```js
-const os = require('os)
-const path = require('path')
-const autoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
-
-const customDirectory = path.join(os.homedir(), '.my-app', 'tls', 'local')
-
-nodecert(customDirectory)
-```
 
 ## Help wanted
 

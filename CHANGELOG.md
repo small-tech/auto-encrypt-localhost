@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [4.0.1] - 2020-03-09
+
+### Changed
+
+  - Updated readme.
+
 ## [4.0.0] - 2020-03-09
 
 New name. Now isomorphic with [Auto Encrypt](https://source.small-tech.org/site.js/lib/auto-encrypt).

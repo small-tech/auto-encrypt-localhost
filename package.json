@@ -1,6 +1,6 @@
 {
   "name": "@small-tech/auto-encrypt-localhost",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Automatically provision and use locally-trusted TLS certificates in Node.js using mkcert.",
   "main": "index.js",
   "bin": "bin/auto-encrypt-localhost.js",
