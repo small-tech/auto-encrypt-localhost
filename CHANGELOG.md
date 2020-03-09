@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [4.0.0] - 2020-03-09
+
+### Changed
+
+Breaking changes.
+
+  - Name change to Auto Encrypt Localhost.
+  - Package name change to auto-encrypt-localhost.
+  - Package namespace change to @small-tech.
+  - Binary name changed to auto-encrypt-localhost.
+  - Default certificate location changed to ~/.small-tech.org/auto-encrypt-localhost/.
+  - Function signature changed to accept parameter object.
+
+### Added
+
+  - Main function now returns an object containing the generated private key and TLS certificate that can be passed as the options object to the `https.createServer()` method.
+
 ## [3.2.0] - 2020-02-15
 
 ### Added

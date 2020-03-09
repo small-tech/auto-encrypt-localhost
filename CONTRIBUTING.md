@@ -1,1 +1,1 @@
-Pull requests welcome over at the Github mirror: https://github.com/indie-mirror/nodecert
+Pull requests welcome over at the Github mirror: __TODO: update with new GitHub mirror URL when we have it__

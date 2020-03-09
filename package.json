@@ -1,20 +1,20 @@
 {
-  "name": "@ind.ie/nodecert",
-  "version": "3.2.0",
+  "name": "@small-tech/auto-encrypt-localhost",
+  "version": "4.0.0",
   "description": "Automatically provision and use locally-trusted TLS certificates in Node.js using mkcert.",
   "main": "index.js",
-  "bin": "bin/nodecert.js",
+  "bin": "bin/auto-encrypt-localhost.js",
   "scripts": {
     "start": "node index.js",
     "test": "QUIET=true tape test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git@source.ind.ie:hypha/tools/nodecert.git"
+    "url": "https://source.small-tech.org/site.js/lib/auto-encrypt-localhost.git"
   },
   "author": {
     "name": "Aral Balkan",
-    "email": "aral@ind.ie",
+    "email": "aral@small-tech.org",
     "url": "https://ar.al"
   },
   "license": "AGPL-3.0-or-later",

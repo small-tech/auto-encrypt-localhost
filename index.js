@@ -10,7 +10,8 @@ const homeDir = os.homedir()
 
 const syswidecas = require('syswide-cas')
 
-let nodecertDir
+let tlsOptions
+let settingsPath
 
 function log(...args) {
   if (process.env.QUIET) {
@@ -19,17 +20,31 @@ function log(...args) {
   console.log(...args)
 }
 
-module.exports = function (_nodecertDir = path.join(homeDir, '.small-tech.org', 'nodecert')) {
+/**
+ * Automatically provisions trusted development-time (localhost) certificates in Node.js via mkcert.
+ * @function autoEncryptLocalhost
+ *
+ * @param {Object}   parameterObject
+ * @param {Object}   [parameterObject.options]      Standard https server options.
+ * @param {String}   [parameterObject.settingsPath=~/.small-tech.org/auto-encrypt-localhost/] Custom path to save the certificate and private key to.
+ * @returns {Object} An options object to be passed to the https.createServer() method.
+ */
+function autoEncryptLocalhost (parameterObject) {
 
-  nodecertDir = _nodecertDir
+  if (parameterObject == undefined) { parameterObject = {} }
+  tlsOptions = parameterObject.options || {}
+  settingsPath = parameterObject.settingsPath || path.join(homeDir, '.small-tech.org', 'auto-encrypt-localhost')
+
+  const keyFilePath = path.join(settingsPath, 'localhost-key.pem')
+  const certFilePath = path.join(settingsPath, 'localhost.pem')
 
   // Create certificates.
   if (!allOK()) {
 
-    log('   📜    ❨Nodecert❩ Setting up…')
+    log('   📜    ❨Auto Encrypt Localhost❩ Setting up…')
 
-    // Ensure the nodecert directory exists.
-    fs.ensureDirSync(nodecertDir)
+    // Ensure the Auto Encrypt Localhost directory exists.
+    fs.ensureDirSync(settingsPath)
 
     // Get a path to the mkcert binary for this machine.
     const mkcertBinary = mkcertBinaryForThisMachine()
@@ -45,22 +60,22 @@ module.exports = function (_nodecertDir = path.join(homeDir, '.small-tech.org', 
       env: process.env,
       stdio: 'pipe'     // suppress output
     }
-    options.env.CAROOT = nodecertDir
+    options.env.CAROOT = settingsPath
 
     try {
       // Create the local certificate authority.
-      log('   📜    ❨Nodecert❩ Creating local certificate authority (local CA) using mkcert…')
+      log('   📜    ❨Auto Encrypt Localhost❩ Creating local certificate authority (local CA) using mkcert…')
       childProcess.execFileSync(mkcertBinary, ['-install'], options)
-      log('   📜    ❨Nodecert❩ Local certificate authority created.')
+      log('   📜    ❨Auto Encrypt Localhost❩ Local certificate authority created.')
       // Create the local certificate.
-      log('   📜    ❨Nodecert❩ Creating local TLS certificates using mkcert…')
+      log('   📜    ❨Auto Encrypt Localhost❩ Creating local TLS certificates using mkcert…')
       const createCertificateArguments = [
-        `-key-file=${path.join(nodecertDir, 'localhost-key.pem')}`,
-        `-cert-file=${path.join(nodecertDir, 'localhost.pem')}`,
+        `-key-file=${keyFilePath}`,
+        `-cert-file=${certFilePath}`,
         'localhost', '127.0.0.1', '::1'
       ]
       childProcess.execFileSync(mkcertBinary, createCertificateArguments, options)
-      log('   📜    ❨Nodecert❩ Local TLS certificates created.')
+      log('   📜    ❨Auto Encrypt Localhost❩ Local TLS certificates created.')
     } catch (error) {
       log('\n', error)
     }
@@ -69,12 +84,20 @@ module.exports = function (_nodecertDir = path.join(homeDir, '.small-tech.org', 
       process.exit(1)
     }
   } else {
-    log('   📜    ❨Nodecert❩ Local development TLS certificate exists.')
+    log('   📜    ❨Auto Encrypt Localhost❩ Local development TLS certificate exists.')
   }
 
   addRootStoreToNode()
+
+  // Load in and return the certificates in an object that can be passed
+  // directly to https.createServer() if required.
+  tlsOptions.key = fs.readFileSync(keyFilePath, 'utf-8')
+  tlsOptions.cert = fs.readFileSync(certFilePath, 'utf-8')
+
+  return tlsOptions
 }
 
+module.exports = autoEncryptLocalhost
 
 // Write to stdout without a newline
 function print(str) {
@@ -84,14 +107,14 @@ function print(str) {
 
 // Check if the local certificate authority and local keys exist.
 function allOK() {
-  return fs.existsSync(path.join(nodecertDir, 'rootCA.pem')) && fs.existsSync(path.join(nodecertDir, 'rootCA-key.pem')) && fs.existsSync(path.join(nodecertDir, 'localhost.pem')) && fs.existsSync(path.join(nodecertDir, 'localhost-key.pem'))
+  return fs.existsSync(path.join(settingsPath, 'rootCA.pem')) && fs.existsSync(path.join(settingsPath, 'rootCA-key.pem')) && fs.existsSync(path.join(settingsPath, 'localhost.pem')) && fs.existsSync(path.join(settingsPath, 'localhost-key.pem'))
 }
 
 
 // Ensure that node recognises the certificates (e.g., when using https.get(), etc.)
 function addRootStoreToNode () {
-  const nodeCertRootCA = path.join(nodecertDir, 'rootCA.pem')
-  syswidecas.addCAs(nodeCertRootCA)
+  const rootCA = path.join(settingsPath, 'rootCA.pem')
+  syswidecas.addCAs(rootCA)
 }
 
 
@@ -126,17 +149,17 @@ function mkcertBinaryForThisMachine() {
   // Check if the platform + architecture combination is supported.
   if (!fs.existsSync(mkcertBinaryInternalPath)) throw new Error(`Unsupported platform + architecture combination for ${platform}-${architecture}`)
 
-  // Copy the mkcert binary to the external Nodecert directory so that we can call execSync() on it if
+  // Copy the mkcert binary to the external Auto Encrypt Localhost directory so that we can call execSync() on it if
   // the app using this module is wrapped into an executable using Nexe (https://github.com/nexe/nexe) – like
   // Indie Web Server (https://ind.ie/web-server) is, for example. We use readFileSync() and writeFileSync() as
   // Nexe does not support copyFileSync() yet (see https://github.com/nexe/nexe/issues/607).
-  const mkcertBinaryExternalPath = path.join(nodecertDir, mkcertBinaryName)
+  const mkcertBinaryExternalPath = path.join(settingsPath, mkcertBinaryName)
 
   try {
     const mkcertBuffer = fs.readFileSync(mkcertBinaryInternalPath, 'binary')
     fs.writeFileSync(mkcertBinaryExternalPath, mkcertBuffer, {encoding: 'binary', mode: 0o755})
   } catch (error) {
-    throw new Error(`   🤯    ❨Nodecert❩ Panic: Could not copy mkcert to external directory: ${error.message}`)
+    throw new Error(`   🤯    ❨Auto Encrypt Localhost❩ Panic: Could not copy mkcert to external directory: ${error.message}`)
   }
 
   return mkcertBinaryExternalPath
@@ -167,7 +190,7 @@ function tryToInstallTheDependency() {
     // required on Windows.
   } else {
     // Unknown platform. This should have been caught earlier. Panic.
-    throw new Error('   🤯    ❨Nodecert❩ Panic: Unknown platform detected.', _platform)
+    throw new Error('   🤯    ❨Auto Encrypt Localhost❩ Panic: Unknown platform detected.', _platform)
   }
 }
 
@@ -178,7 +201,7 @@ function tryToInstallTheDependency() {
 function tryToInstallCertutilOnLinux() {
   if (commandExists('certutil')) return // Already installed
 
-  print('   📜    ❨Nodecert❩ Installing certutil dependency (Linux) ')
+  print('   📜    ❨Auto Encrypt Localhost❩ Installing certutil dependency (Linux) ')
   let options = {env: process.env}
   try {
     if (commandExists('apt')) {
@@ -187,19 +210,19 @@ function tryToInstallCertutilOnLinux() {
       childProcess.execSync('sudo apt-get install -y -q libnss3-tools', options)
     } else if (commandExists('yum')) {
       // Untested: if you test this, please let me know https://github.com/indie-mirror/https-server/issues
-      log('\n   🤪    ❨Nodecert❩ Attempting to install required dependency using yum. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
+      log('\n   🤪    ❨Auto Encrypt Localhost❩ Attempting to install required dependency using yum. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
       childProcess.execSync('sudo yum install nss-tools', options)
-      log('   📜    ❨Nodecert❩ Certutil installed using yum.')
+      log('   📜    ❨Auto Encrypt Localhost❩ Certutil installed using yum.')
     } else if (commandExists('pacman')) {
       childProcess.execSync('sudo pacman -S nss', options)
-      log('   📜    ❨Nodecert❩ Certutil installed using pacman.')
+      log('   📜    ❨Auto Encrypt Localhost❩ Certutil installed using pacman.')
     } else {
     // Neither Homebrew nor MacPorts is installed. Warn the person.
-    log('\n   ⚠️    ❨Nodecert❩ Linux: No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run nodecert again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
+    log('\n   ⚠️    ❨Auto Encrypt Localhost❩ Linux: No supported package manager found for installing certutil on Linux (tried apt, yum, and pacman. Please install certutil manually and run Auto Encrypt Localhost again. For more instructions on installing mkcert dependencies, please see https://github.com/FiloSottile/mkcert/\n')
     }
   } catch (error) {
     // There was an error and we couldn’t install the dependency. Warn the person.
-    log('\n   ⚠️    ❨Nodecert❩ Linux: Failed to install nss. Please install it manually and run nodecert again if you want your certificate to work in Chrome and Firefox', error)
+    log('\n   ⚠️    ❨Auto Encrypt Localhost❩ Linux: Failed to install nss. Please install it manually and run Auto Encrypt Localhost again if you want your certificate to work in Chrome and Firefox', error)
   }
 }
 
@@ -218,17 +241,17 @@ function tryToInstallCertutilOnDarwin() {
     // with Firefox crashing).
     try {
       // Homebrew can take a long time start, show current status.
-      print('   📜    ❨Nodecert❩ Checking if certutil dependency is installed (Darwin) using Homebrew… ')
+      print('   📜    ❨Auto Encrypt Localhost❩ Checking if certutil dependency is installed (Darwin) using Homebrew… ')
       childProcess.execSync('brew list nss >/dev/null 2>&1', options)
       log(' ok.')
     } catch (error) {
       // NSS is not installed. Install it.
       try {
-        print('   📜    ❨Nodecert❩ Installing certutil dependency (Darwin) using Homebrew… ')
+        print('   📜    ❨Auto Encrypt Localhost❩ Installing certutil dependency (Darwin) using Homebrew… ')
         childProcess.execSync('brew install nss >/dev/null 2>&1', options)
         log('done.')
       } catch (error) {
-        log('\n   ⚠️    ❨Nodecert❩ macOS: Failed to install nss via Homebrew. Please install it manually and run nodecert again if you want your certificate to work in Firefox', error)
+        log('\n   ⚠️    ❨Auto Encrypt Localhost❩ macOS: Failed to install nss via Homebrew. Please install it manually and run Auto Encrypt Localhost again if you want your certificate to work in Firefox', error)
         return
       }
     }
@@ -236,7 +259,7 @@ function tryToInstallCertutilOnDarwin() {
     // Untested. This is based on the documentation at https://guide.macports.org/#using.port.installed. I don’t have MacPorts installed
     // and it doesn’t play well with Homebrew so I won’t be testing this anytime soon. If you do, please let me know how it works
     // by opening an issue on https://github.com/indie-mirror/https-server/issues
-    log('\n   🤪    ❨Nodecert❩ Attempting to install required dependency using MacPorts. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
+    log('\n   🤪    ❨Auto Encrypt Localhost❩ Attempting to install required dependency using MacPorts. This is currently untested. If it works (or blows up) for you, I’d appreciate it if you could open an issue at https://github.com/indie-mirror/https-server/issues and let me know. Thanks! – Aral\n')
 
     try {
       childProcess.execSync('port installed nss', options)
@@ -245,13 +268,13 @@ function tryToInstallCertutilOnDarwin() {
       try {
         childProcess.execSync('sudo port install nss', options)
       } catch (error) {
-        log('\n   ⚠️    ❨Nodecert❩ macOS: Failed to install nss via MacPorts. Please install it manually and run nodecert again if you want your certificate to work in Firefox', error)
+        log('\n   ⚠️    ❨Auto Encrypt Localhost❩ macOS: Failed to install nss via MacPorts. Please install it manually and run Auto Encrypt Localhost again if you want your certificate to work in Firefox', error)
         return
       }
     }
   } else {
     // Neither Homebrew nor MacPorts is installed. Warn the person.
-    log('\n   ⚠️    ❨Nodecert❩ macOS: Cannot install certutil (nss) as you don’t have Homebrew or MacPorts installed.\n\n If you want your certificate to work in Firefox, please install one of those package managers and then install nss manually:\n\n   * Homebrew (https://brew.sh): brew install nss\n   * MacPorts(https://macports.org): sudo port install nss\n')
+    log('\n   ⚠️    ❨Auto Encrypt Localhost❩ macOS: Cannot install certutil (nss) as you don’t have Homebrew or MacPorts installed.\n\n If you want your certificate to work in Firefox, please install one of those package managers and then install nss manually:\n\n   * Homebrew (https://brew.sh): brew install nss\n   * MacPorts(https://macports.org): sudo port install nss\n')
     return
   }
 }
