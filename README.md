@@ -113,7 +113,7 @@ Your certificates will be created in the _~/.small-tech.org/auto-encrypt-localho
 
 ### Windows
 
-Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores)
+Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores).
 
 ## Related projects
 
