@@ -83,6 +83,7 @@ By default, Auto Encrypt Localhost creates and uses the _~/.small-tech.org/auto-
 const os = require('os')
 const path = require('path')
 const https = require('https')
+const autoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
 
 const settingsPath = path.join(os.homedir(), '.my-namespace', 'magic-localhost-certificates')
 
