@@ -110,6 +110,22 @@ Your certificates will be created in the _~/.small-tech.org/auto-encrypt-localho
 
 Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores)
 
+## Related projects
+
+From lower-level to higher-level:
+
+### [@small-tech/auto-encrypt](https://source.small-tech.org/site.js/lib/auto-encrypt)
+
+Automatically provisions and renews [Let’s Encrypt](https://letsencrypt.org)™ TLS certificates for [Node.js](https://nodejs.org)® [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
+
+### [@small-tech/https](https://source.small-tech.org/site.js/lib/https)
+
+A drop-in standard Node.js `https` module replacement with both automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt, see [@small-tech/https](https://source.small-tech.org/site.js/lib/https).
+
+### [Site.js](https://sitejs.org)
+
+A complete [small technology](https://small-tech.org/about/#small-technology) tool to develop, test, and deploy a secure static or dynamic personal web site or app with zero configuration.
+
 ## Help wanted
 
 * Linux: _certutil_ (nss) auto-installation has not been tested with yum.
