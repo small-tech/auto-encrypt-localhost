@@ -119,17 +119,25 @@ Locally-trusted certificates do not work under Firefox. Please use Edge or Chrom
 
 From lower-level to higher-level:
 
-### [@small-tech/auto-encrypt](https://source.small-tech.org/site.js/lib/auto-encrypt)
+### Auto Encrypt
+
+  - Source: https://source.small-tech.org/site.js/lib/auto-encrypt
+  - Package: [@small-tech/auto-encrypt](https://www.npmjs.com/package/@small-tech/auto-encrypt-localhost)
 
 Automatically provisions and renews [Let’s Encrypt](https://letsencrypt.org)™ TLS certificates for [Node.js](https://nodejs.org)® [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
 
-### [@small-tech/https](https://source.small-tech.org/site.js/lib/https)
+### HTTPS
 
-A drop-in standard Node.js `https` module replacement with both automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt, see [@small-tech/https](https://source.small-tech.org/site.js/lib/https).
+  - Source: https://source.small-tech.org/site.js/lib/https
+  - Package: [@small-tech/https](https://www.npmjs.com/package/@small-tech/https)
 
-### [Site.js](https://sitejs.org)
+A drop-in [standard Node.js HTTPS module](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) replacement with both automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt.
 
-A complete [small technology](https://small-tech.org/about/#small-technology) tool to develop, test, and deploy a secure static or dynamic personal web site or app with zero configuration.
+### Site.js
+
+  - Web site: https://sitejs.org
+
+A complete [small technology](https://small-tech.org/about/#small-technology) tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
 
 ## Help wanted
 
