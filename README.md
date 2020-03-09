@@ -131,12 +131,6 @@ A complete [small technology](https://small-tech.org/about/#small-technology) to
 * Linux: _certutil_ (nss) auto-installation has not been tested with yum.
 * macOS: _certutil_ (nss) auto-installation has not been tested with MacPorts.
 
-# TODO: update the Github Mirror URL!
-
-I can use your help in testing these out. Let me know if it works or blows up by [opening an issue on the GitHub mirror](). [Pull requests]() are also [welcome](./CONTRIBUTING.md).
-
-Thanks in advance! 🤓👍 – [Aral](https://ar.al)
-
 ## Like this? Fund us!
 
 [Small Technology Foundation](https://small-tech.org) is a tiny, independent not-for-profit.
@@ -145,7 +139,7 @@ We exist in part thanks to patronage by people like you. If you share [our visio
 
 ## Copyright
 
-Copyright &copy; Aral Balkan, Small Technology Foundation.
+Copyright &copy; [Aral Balkan](https://ar.al), [Small Technology Foundation](https://small-tech.org).
 
 ## License
 
