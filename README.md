@@ -47,9 +47,9 @@ Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/Filo
 
   * Automatically installs the _certutil_ (nss) dependency on Linux on systems with apt, pacman, yum (untested) and  and on macOS if you have [Homebrew](https://brew.sh) or [MacPorts](https://www.macports.org/) (untested).
 
-  * Creates a root Certificate Authority
+  * Creates a root Certificate Authority.
 
-  * Creates locally-trusted TLS certificates for localhost, 127.0.0.1, and ::1
+  * Creates locally-trusted TLS certificates for localhost, 127.0.0.1, and ::1.
 
 You can use these certificates for local development without triggering self-signed certificate errors.
 
