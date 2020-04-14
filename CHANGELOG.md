@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [5.0.0] - 2020-04-14
+
+### Changed
+
+  - __Breaking change:__ New API to maintain consistency with [Auto Encrypt](https://source.small-tech.org/site.js/lib/auto-encrypt).
+
 ## [4.0.1] - 2020-03-09
 
 ### Changed

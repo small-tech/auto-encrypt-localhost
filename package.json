@@ -1,12 +1,26 @@
 {
   "name": "@small-tech/auto-encrypt-localhost",
-  "version": "4.0.1",
-  "description": "Automatically provision and use locally-trusted TLS certificates in Node.js using mkcert.",
+  "version": "5.0.0",
+  "description": "Automatically provisions and installs locally-trusted TLS certificates for Node.js® https servers (including Express.js, etc.) using mkcert.",
+  "keywords": [
+    "mkcert",
+    "https",
+    "tls",
+    "auto encrypt",
+    "localhost",
+    "small tech",
+    "automatic"
+  ],
   "main": "index.js",
   "bin": "bin/auto-encrypt-localhost.js",
   "scripts": {
     "start": "node index.js",
-    "test": "QUIET=true tape test.js"
+    "test": "QUIET=true tape 'test/**/*.js' | tap-spec",
+    "coverage": "QUIET=true nyc tape 'test/**/*.js' | tap-nyc",
+    "test-debug": "tape 'test/**/*.js' | tap-spec",
+    "coverage-debug": "nyc tape 'test/**/*.js' | tap-nyc",
+    "generate-dependency-diagram": "mkdir -p artefacts && node_modules/.bin/depcruise --max-depth 1 --output-type dot index.js | dot -T svg > artefacts/dependency-graph.svg",
+    "generate-developer-documentation": "npm run generate-dependency-diagram && node_modules/.bin/jsdoc2md --private --template developer-documentation.hbs --files index.js > developer-documentation.md"
   },
   "repository": {
     "type": "git",
@@ -23,7 +37,13 @@
     "syswide-cas": "^5.3.0"
   },
   "devDependencies": {
-    "tape": "^4.10.1"
+    "nyc": "^14.1.1",
+    "tap-nyc": "^1.0.3",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.13.0",
+    "dependency-cruiser": "^8.1.0",
+    "jsdoc": "^3.6.3",
+    "jsdoc-to-markdown": "^5.0.3"
   },
   "pkg": {
     "assets": "mkcert-bin/*"
