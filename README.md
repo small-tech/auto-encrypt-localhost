@@ -1,6 +1,10 @@
 # Auto Encrypt Localhost
 
-Automatically provisions trusted localhost TLS certificates via [mkcert](https://github.com/FiloSottile/mkcert/) for development without browser security warnings in Node.js.
+Adds automatic provisioning and renewal of trusted localhost TLS certificates via [mkcert](https://github.com/FiloSottile/mkcert/) for development without browser security warnings in Node.js.
+
+## How it works
+
+Before creating your HTTPS server, uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
 
 ## Installation
 
@@ -10,13 +14,29 @@ npm i @small-tech/auto-encrypt-localhost
 
 ## Usage
 
+### Instructions
+
+1. Import the module:
+
+    ```js
+    const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+    ```
+
+2. Prefix your server creation code with a reference to the Auto Encrypt Localhost class:
+
+    ```js
+    // const server = https.createServer(…) becomes
+    const server = AutoEncryptLocalhost.https.createServer(…)
+    ```
+
+### Example
+
 ```js
 // Create an https server using locally-trusted certificates.
 
-const https = require('https')
-const autoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
 
-const server = https.createServer(autoEncryptLocalhost(), (request, response) => {
+const server = AutoEncryptLocalhost.https.createServer((request, response) => {
   response.end('Hello, world!')
 })
 
@@ -26,6 +46,34 @@ server.listen(() => {
 ```
 
 PS. You can find this example in the _example/_ folder in the source code. Run it by typing `node example`.
+
+Note that on Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you (or to see how to implement privilege escalation seamlessly in your own servers, see [Site.js](https://sitejs.org)).
+
+## Configuration
+
+You can specify a custom settings path for your local certificate authority and certificate data to be stored in by adding the Auto Encrypt Localhost-specific `settingsPath` option to the options object you pass to the Node `https` server. If not specified, the default settings path (_~/.small-tech.org/auto-encrypt-localhost/_) is used.
+
+### Example
+
+```js
+const AutoEncrypt = require('@small-tech/auto-encrypt-localhost')
+
+const options = {
+  // Regular HTTPS server and TLS server options, if any, go here.
+
+  // Optional Auto Encrypt options:
+  settingsPath: '/custom/settings/path'
+}
+
+// Pass the options object to https.createServer()
+const server = AutoEncryptLocalhost.https.createServer(options, listener)
+
+// …
+```
+
+## Developer documentation
+
+If you want to help improve Auto Encrypt Localhost or better understand how it is structured and operates, please see the [developer documentation](developer-documentation.md).
 
 ## Like this? Fund us!
 
@@ -38,61 +86,6 @@ We exist in part thanks to patronage by people like you. If you share [our visio
 This is [small technology](https://small-tech.org/about/#small-technology).
 
 If you’re evaluating this for a “startup” or an enterprise, let us save you some time: this is not the right tool for you. This tool is for individual developers to build personal web sites and apps for themselves and for others in a non-colonial manner that respects the human rights of the people who use them.
-
-## How it works
-
-Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/FiloSottile/mkcert/) that:
-
-  * Uses the 64-bit release binaries to support Linux, macOS, and Windows.
-
-  * Automatically installs the _certutil_ (nss) dependency on Linux on systems with apt, pacman, yum (untested) and  and on macOS if you have [Homebrew](https://brew.sh) or [MacPorts](https://www.macports.org/) (untested).
-
-  * Creates a root Certificate Authority.
-
-  * Creates locally-trusted TLS certificates for localhost, 127.0.0.1, and ::1.
-
-You can use these certificates for local development without triggering self-signed certificate errors.
-
-For more details on how Auto Encrypt Localhost works behind the scenes, please [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
-
-## Detailed usage
-
-Auto Encrypt Localhost is exported as a function that accepts an optional parameter object with optional `options` and `settingsPath` properties. The defaults for both are shown below.
-
-```js
-autoEncryptLocalhost({ options: {}, settingsPath: '~/.small-tech.org/auto-encrypt-localhost' })
-```
-
-### Use custom https server options
-
-Auto Encrypt Localhost generates a locally-trusted private key and certificate using mkcert and then loads them in and returns an options object that you can pass directly to the `https.createServer()` method. If you want to pass other options to the server while creating it, just pass your regular options object to Auto Encrypt Localhost wrapped in a parameter object as shown below.
-
-```js
-const options = { /* your other https server options go here */ }
-
-const server = https.createServer(autoEncryptLocalhost({ options }), (request, response) => {
-  response.end('Hello, world!')
-})
-```
-
-### Use a custom settings path
-
-By default, Auto Encrypt Localhost creates and uses the _~/.small-tech.org/auto-encrypt-localhost_ directory as its settings path, to store your certificate and its private key. You can tell it to use a different path instead by specifying the path to use in the `settingsPath` property of its parameter object.
-
-```js
-const os = require('os')
-const path = require('path')
-const https = require('https')
-const autoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
-
-const settingsPath = path.join(os.homedir(), '.my-namespace', 'magic-localhost-certificates')
-
-const server = https.createServer(autoEncryptLocalhost({ settingsPath }), (request, response) => {
-  response.end('Hello, world!')
-})
-```
-
-In the above example, your certificate and its private key will be stored in the _~/.my-namespace/magic-localhost-certificates_ directory (with the names _localhost.pem_ and _localhost-key.pem_, respectively).
 
 ## Command-line interface
 
@@ -124,20 +117,32 @@ From lower-level to higher-level:
   - Source: https://source.small-tech.org/site.js/lib/auto-encrypt
   - Package: [@small-tech/auto-encrypt](https://www.npmjs.com/package/@small-tech/auto-encrypt-localhost)
 
-Automatically provisions and renews [Let’s Encrypt](https://letsencrypt.org)™ TLS certificates for [Node.js](https://nodejs.org)® [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
+Adds automatic provisioning and renewal of [Let’s Encrypt](https://letsencrypt.org) TLS certificates with [OCSP Stapling](https://letsencrypt.org/docs/integration-guide/#implement-ocsp-stapling) to [Node.js](https://nodejs.org) [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
 
 ### HTTPS
 
   - Source: https://source.small-tech.org/site.js/lib/https
   - Package: [@small-tech/https](https://www.npmjs.com/package/@small-tech/https)
 
-A drop-in [standard Node.js HTTPS module](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) replacement with both automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt.
+A drop-in replacement for the [standard Node.js HTTPS module](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) with automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt.
 
 ### Site.js
 
   - Web site: https://sitejs.org
 
 A complete [small technology](https://small-tech.org/about/#small-technology) tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
+
+## A note on Linux and the security farce that is “privileged ports”
+
+Linux has an outdated feature dating from the mainframe days that requires a process that wants to bind to ports < 1024 to have elevated privileges. While this was a security feature in the days of dumb terminals, today it is a security anti-feature. (macOS has dropped this requirement as of macOS Mojave.)
+
+On Linux, ensure your Node process has the right to bind to so-called “privileged” ports by issuing the following command before use:
+
+```sh
+sudo setcap cap_net_bind_service=+ep $(which node)
+```
+
+If you are wrapping your Node app into an executable binary using a module like [Nexe](https://github.com/nexe/nexe), you will have to ensure that every build of your app has that capability set. For an example of how we do this in [Site.js](https://sitejs.org), [see this listing](https://source.ind.ie/site.js/app/blob/master/bin/lib/ensure.js#L124).
 
 ## Help wanted
 
