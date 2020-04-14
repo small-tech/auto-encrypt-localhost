@@ -32,6 +32,12 @@
     "url": "https://ar.al"
   },
   "license": "AGPL-3.0-or-later",
+  "nyc": {
+    "exclude": [
+      "test/**/*.js",
+      "lib/util/*.js"
+    ]
+  },
   "dependencies": {
     "fs-extra": "^8.1.0",
     "syswide-cas": "^5.3.0"
