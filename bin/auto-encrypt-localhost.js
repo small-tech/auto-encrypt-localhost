@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-require('../index.js')()
+const AutoEncryptLocalhost = require('../index.js')
+AutoEncryptLocalhost.https.createServer()
