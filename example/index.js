@@ -6,6 +6,6 @@ const server = AutoEncryptLocalhost.https.createServer((request, response) => {
   response.end('Hello, world!')
 })
 
-server.listen(() => {
+server.listen(443, () => {
   console.log('Web server is running at https://localhost')
 })

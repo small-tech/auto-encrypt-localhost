@@ -1,11 +1,14 @@
 const os = require('os')
 const fs = require('fs-extra')
 const path = require('path')
+const bent = require('bent')
 const test = require('tape')
 const AutoEncryptLocalhost = require('..')
 
-test('certificate creation', t => {
-  t.plan(12)
+const getHttpsString = bent('GET', 'string')
+
+test('certificate creation', async t => {
+  // t.plan(12)
 
   const defaultSettingsPath = path.join(os.homedir(), '.small-tech.org', 'auto-encrypt-localhost')
 
@@ -16,7 +19,9 @@ test('certificate creation', t => {
   fs.removeSync(defaultSettingsPath)
 
   // Run Auto Encrypt Localhost.
-  const server = AutoEncryptLocalhost.https.createServer()
+  const server = AutoEncryptLocalhost.https.createServer((request, response) => {
+    response.end('ok')
+  })
 
   t.ok(fs.existsSync(path.join(defaultSettingsPath)), 'Main settings path exists.')
   t.ok(fs.existsSync(path.join(defaultSettingsPath, 'rootCA.pem')), 'Local certificate authority exists.')
@@ -31,6 +36,18 @@ test('certificate creation', t => {
 
   t.strictEquals(server.key, key, 'Private key used in the https server instance matches key from disk.')
   t.strictEquals(server.cert, cert, 'Certificate used in https server instance matches key from disk.')
+
+  await new Promise((resolve, reject) => {
+    server.listen(443, () => {
+      resolve()
+    })
+  })
+
+  const response = await getHttpsString('https://localhost')
+
+  t.strictEquals(response, 'ok', 'The response from the server is as expected.')
+
+  server.close()
 
   //
   // Custom settings path.
