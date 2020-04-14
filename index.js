@@ -1,3 +1,12 @@
+/**
+ * Automatically provisions and installs locally-trusted TLS certificates for Node.js® https servers
+ * (including Express.js, etc.) using mkcert.
+ *
+ * @module @small-tech/auto-encrypt-localhost
+ * @copyright © 2020 Aral Balkan, Small Technology Foundation.
+ * @license AGPLv3 or later.
+ */
+
 const os                         = require('os')
 const fs                         = require('fs-extra')
 const path                       = require('path')
@@ -14,7 +23,6 @@ const { log }                    = require('./lib/util/log')
  * Use: AutoEncryptLocalhost.https.createServer(…)
  *
  * @alias module:@small-tech/auto-encrypt-localhost
- * @hideconstructor
  */
 class AutoEncryptLocalhost {
   /**

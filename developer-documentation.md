@@ -21,7 +21,7 @@ Auto Encrypt Localhost is supported on:
 
 ![Dependency relationship diagram for Auto Correct](artefacts/dependency-graph.svg)
 
-Only a single level of dependencies is shown for clarity.
+__Not shown (for clarity):__ third-party Node modules, the `util` namespace with helper modules – for logging, error handling, and an async `forEach` implementation – and the `typedefs` namespace with JSDoc type definitions.
 
 Generated using [dependency cruiser](https://github.com/sverweij/dependency-cruiser).
 
@@ -65,18 +65,53 @@ To regenerate the dependency diagram and this documentation:
 npm run generate-developer-documentation
 ```
 
-<a name="autoEncryptLocalhost"></a>
+<a name="module_@small-tech/auto-encrypt-localhost"></a>
 
-## autoEncryptLocalhost(parameterObject) ⇒ <code>Object</code>
+## @small-tech/auto-encrypt-localhost
+Automatically provisions and installs locally-trusted TLS certificates for Node.js® https servers
+(including Express.js, etc.) using mkcert.
+
+**License**: AGPLv3 or later.  
+**Copyright**: © 2020 Aral Balkan, Small Technology Foundation.  
+
+* [@small-tech/auto-encrypt-localhost](#module_@small-tech/auto-encrypt-localhost)
+    * [AutoEncryptLocalhost](#exp_module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost) ⏏
+        * [.https](#module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost.https)
+        * [.createServer([options])](#module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost.createServer) ⇒ <code>https.Server</code>
+
+<a name="exp_module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost"></a>
+
+### AutoEncryptLocalhost ⏏
+Auto Encrypt Localhost is a static class. Please do not instantiate.
+
+Use: AutoEncryptLocalhost.https.createServer(…)
+
+**Kind**: Exported class  
+<a name="module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost.https"></a>
+
+#### AutoEncryptLocalhost.https
+By aliasing the https property to the AutoEncryptLocalhost static class itself, we enable
+people to add AutoEncryptLocalhost to their existing apps by requiring the module
+and prefixing their https.createServer(…) line with AutoEncryptLocalhost:
+
+**Kind**: static property of [<code>AutoEncryptLocalhost</code>](#exp_module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost)  
+**Example**  
+```js
+const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+const server = AutoEncryptLocalhost.https.createServer()
+```
+<a name="module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost.createServer"></a>
+
+#### AutoEncryptLocalhost.createServer([options]) ⇒ <code>https.Server</code>
 Automatically provisions trusted development-time (localhost) certificates in Node.js via mkcert.
 
-**Kind**: global function  
-**Returns**: <code>Object</code> - An options object to be passed to the https.createServer() method.  
+**Kind**: static method of [<code>AutoEncryptLocalhost</code>](#exp_module_@small-tech/auto-encrypt-localhost--AutoEncryptLocalhost)  
+**Returns**: <code>https.Server</code> - The server instance returned by Node’s https.createServer() method.  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| parameterObject | <code>Object</code> |  |  |
-| [parameterObject.settingsPath] | <code>String</code> | <code>~/.small-tech.org/auto-encrypt-localhost/</code> | Custom path to save the certificate and private key to. |
+| [options] | <code>Object</code> |  | Optional HTTPS options object with optional additional                                           Auto Encrypt-specific configuration settings. |
+| [options.settingsPath] | <code>String</code> | <code>~/.small-tech.org/auto-encrypt-localhost/</code> | Custom path to save the certificate and private key to. |
 
 
 ## Like this? Fund us!
