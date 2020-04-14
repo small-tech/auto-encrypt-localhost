@@ -37,13 +37,14 @@
     "syswide-cas": "^5.3.0"
   },
   "devDependencies": {
+    "bent": "^7.3.0",
+    "dependency-cruiser": "^8.1.0",
+    "jsdoc": "^3.6.3",
+    "jsdoc-to-markdown": "^5.0.3",
     "nyc": "^14.1.1",
     "tap-nyc": "^1.0.3",
     "tap-spec": "^5.0.0",
-    "tape": "^4.13.0",
-    "dependency-cruiser": "^8.1.0",
-    "jsdoc": "^3.6.3",
-    "jsdoc-to-markdown": "^5.0.3"
+    "tape": "^4.13.0"
   },
   "pkg": {
     "assets": "mkcert-bin/*"
