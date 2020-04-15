@@ -1,7 +1,7 @@
 {
   "name": "@small-tech/auto-encrypt-localhost",
-  "version": "5.0.1",
-  "description": "Automatically provisions and installs locally-trusted TLS certificates for Node.js® https servers (including Express.js, etc.) using mkcert.",
+  "version": "5.0.2",
+  "description": "Automatically provisions and installs locally-trusted TLS certificates for Node.js https servers (including Express.js, etc.) using mkcert.",
   "keywords": [
     "mkcert",
     "https",
@@ -12,6 +12,10 @@
     "automatic"
   ],
   "main": "index.js",
+  "funding": {
+    "type": "foundation",
+    "url": "https://small-tech.org/fund-us/"
+  },
   "bin": "bin/auto-encrypt-localhost.js",
   "scripts": {
     "start": "node index.js",

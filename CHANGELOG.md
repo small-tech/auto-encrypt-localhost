@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [5.0.2] - 2020-04-16
+
+### Added
+
+  - Minor: add funding information; make package information consistent with related projects.
+
 ## [5.0.1] - 2020-04-15
 
 ### Changed
