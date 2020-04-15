@@ -1,6 +1,6 @@
 # Auto Encrypt Localhost
 
-Adds automatic provisioning and renewal of trusted localhost TLS certificates via [mkcert](https://github.com/FiloSottile/mkcert/) for development without browser security warnings in Node.js.
+Automatically provisions and installs locally-trusted TLS certificates for Node.js® https servers (including Express.js, etc.) using [mkcert](https://github.com/FiloSottile/mkcert/).
 
 ## How it works
 
@@ -115,7 +115,7 @@ From lower-level to higher-level:
 ### Auto Encrypt
 
   - Source: https://source.small-tech.org/site.js/lib/auto-encrypt
-  - Package: [@small-tech/auto-encrypt](https://www.npmjs.com/package/@small-tech/auto-encrypt-localhost)
+  - Package: [@small-tech/auto-encrypt](https://www.npmjs.com/package/@small-tech/auto-encrypt)
 
 Adds automatic provisioning and renewal of [Let’s Encrypt](https://letsencrypt.org) TLS certificates with [OCSP Stapling](https://letsencrypt.org/docs/integration-guide/#implement-ocsp-stapling) to [Node.js](https://nodejs.org) [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
 
@@ -129,6 +129,7 @@ A drop-in replacement for the [standard Node.js HTTPS module](https://nodejs.org
 ### Site.js
 
   - Web site: https://sitejs.org
+  - Source: https://source.small-tech.org/site.js/app
 
 A complete [small technology](https://small-tech.org/about/#small-technology) tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
 
