@@ -66,16 +66,15 @@ class AutoEncryptLocalhost {
       return fs.existsSync(path.join(settingsPath, 'rootCA.pem')) && fs.existsSync(path.join(settingsPath, 'rootCA-key.pem')) && fs.existsSync(path.join(settingsPath, 'localhost.pem')) && fs.existsSync(path.join(settingsPath, 'localhost-key.pem'))
     }
 
+    // Ensure the Auto Encrypt Localhost directory exists.
+    fs.ensureDirSync(settingsPath)
+
+    // Get a path to the mkcert binary for this machine.
+    const mkcertBinary = mkcertBinaryForThisMachine(settingsPath)
+
     // Create certificates.
     if (!allOK()) {
-
-      log('   📜    ❨Auto Encrypt Localhost❩ Setting up…')
-
-      // Ensure the Auto Encrypt Localhost directory exists.
-      fs.ensureDirSync(settingsPath)
-
-      // Get a path to the mkcert binary for this machine.
-      const mkcertBinary = mkcertBinaryForThisMachine(settingsPath)
+      log('\n   📜    ❨Auto Encrypt Localhost❩ Setting up…')
 
       // On Linux and on macOS, mkcert uses the Mozilla nss library.
       // Try to install this automatically and warn the person if we can’t so
@@ -112,7 +111,7 @@ class AutoEncryptLocalhost {
         process.exit(1)
       }
     } else {
-      log('   📜    ❨Auto Encrypt Localhost❩ Local development TLS certificate exists.')
+      log('\n   📜    ❨Auto Encrypt Localhost❩ Local development TLS certificate exists.')
     }
 
     // Add root store to Node to ensure Node recognises the certificates (e.g., when using https.get(), etc.)
