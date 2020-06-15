@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [5.1.1] - 2020-06-15
+
+### Changed
+
+  - Log output now matches format of Site.js.
+
 ## [5.1.0] - 2020-04-16
 
 ### Added

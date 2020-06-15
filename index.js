@@ -74,7 +74,7 @@ class AutoEncryptLocalhost {
 
     // Create certificates.
     if (!allOK()) {
-      log('\n   📜    ❨Auto Encrypt Localhost❩ Setting up…')
+      log('\n   📜    ❨auto-encrypt-localhost❩ Setting up…')
 
       // On Linux and on macOS, mkcert uses the Mozilla nss library.
       // Try to install this automatically and warn the person if we can’t so
@@ -91,18 +91,18 @@ class AutoEncryptLocalhost {
 
       try {
         // Create the local certificate authority.
-        log('   📜    ❨Auto Encrypt Localhost❩ Creating local certificate authority (local CA) using mkcert…')
+        log('   📜    ❨auto-encrypt-localhost❩ Creating local certificate authority (local CA) using mkcert…')
         childProcess.execFileSync(mkcertBinary, ['-install'], mkcertProcessOptions)
-        log('   📜    ❨Auto Encrypt Localhost❩ Local certificate authority created.')
+        log('   📜    ❨auto-encrypt-localhost❩ Local certificate authority created.')
         // Create the local certificate.
-        log('   📜    ❨Auto Encrypt Localhost❩ Creating local TLS certificates using mkcert…')
+        log('   📜    ❨auto-encrypt-localhost❩ Creating local TLS certificates using mkcert…')
         const createCertificateArguments = [
           `-key-file=${keyFilePath}`,
           `-cert-file=${certFilePath}`,
           'localhost', '127.0.0.1', '::1'
         ]
         childProcess.execFileSync(mkcertBinary, createCertificateArguments, mkcertProcessOptions)
-        log('   📜    ❨Auto Encrypt Localhost❩ Local TLS certificates created.')
+        log('   📜    ❨auto-encrypt-localhost❩ Local TLS certificates created.')
       } catch (error) {
         log('\n', error)
       }
@@ -111,7 +111,7 @@ class AutoEncryptLocalhost {
         process.exit(1)
       }
     } else {
-      log('\n   📜    ❨Auto Encrypt Localhost❩ Local development TLS certificate exists.')
+      log('\n   📜    ❨auto-encrypt-localhost❩ Local development TLS certificate exists.')
     }
 
     // Add root store to Node to ensure Node recognises the certificates (e.g., when using https.get(), etc.)
