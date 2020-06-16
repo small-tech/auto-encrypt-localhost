@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [5.1.2] - 2020-06-16
+
+### Fixed
+
+  - Minor: Fix extraneous newlines in log statements.
+
 ## [5.1.1] - 2020-06-15
 
 ### Changed
 
-  - Log output now matches format of Site.js.
+  - Minor: Log output now matches format of Site.js.
 
 ## [5.1.0] - 2020-04-16
 

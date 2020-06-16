@@ -74,7 +74,7 @@ class AutoEncryptLocalhost {
 
     // Create certificates.
     if (!allOK()) {
-      log('\n   📜    ❨auto-encrypt-localhost❩ Setting up…')
+      log('   📜    ❨auto-encrypt-localhost❩ Setting up…')
 
       // On Linux and on macOS, mkcert uses the Mozilla nss library.
       // Try to install this automatically and warn the person if we can’t so
@@ -111,7 +111,7 @@ class AutoEncryptLocalhost {
         process.exit(1)
       }
     } else {
-      log('\n   📜    ❨auto-encrypt-localhost❩ Local development TLS certificate exists.')
+      log('   📜    ❨auto-encrypt-localhost❩ Local development TLS certificate exists.')
     }
 
     // Add root store to Node to ensure Node recognises the certificates (e.g., when using https.get(), etc.)
