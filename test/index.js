@@ -7,6 +7,12 @@ const AutoEncryptLocalhost = require('..')
 
 const getHttpsString = bent('GET', 'string')
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
 test('certificate creation', async t => {
   // t.plan(12)
 
@@ -45,7 +51,20 @@ test('certificate creation', async t => {
 
   const response = await getHttpsString('https://localhost')
 
-  t.strictEquals(response, 'ok', 'The response from the server is as expected.')
+  t.strictEquals(response, 'ok', 'Response from server is as expected for access via localhost.')
+
+  // Test access from all local interfaces with IPv4 addresses.
+  const localIPv4Addresses =
+    Object.entries(os.networkInterfaces())
+    .map(iface =>
+      iface[1].filter(addresses =>
+        addresses.family === 'IPv4')
+        .map(addresses => addresses.address)).flat()
+
+  await asyncForEach(localIPv4Addresses, async localIPv4Address => {
+    const response = await getHttpsString(`https://${localIPv4Address}`)
+    t.strictEquals(response, 'ok', `Response from server is as expected for access via ${localIPv4Address}`)
+  })
 
   server.close()
 

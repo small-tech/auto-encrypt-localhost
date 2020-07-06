@@ -96,12 +96,24 @@ class AutoEncryptLocalhost {
         log('   📜    ❨auto-encrypt-localhost❩ Local certificate authority created.')
         // Create the local certificate.
         log('   📜    ❨auto-encrypt-localhost❩ Creating local TLS certificates using mkcert…')
-        const createCertificateArguments = [
+
+        // Support all local interfaces so that the machine can be reached over the local network via IPv4.
+        // This is very useful for testing with multiple devices over the local area network without needing to expose
+        // the machine over the wide area network/Internet using a service like ngrok.
+        const localIPv4Addresses =
+        Object.entries(os.networkInterfaces())
+        .map(iface =>
+          iface[1].filter(addresses =>
+            addresses.family === 'IPv4')
+            .map(addresses => addresses.address)).flat()
+
+        const certificateDetails = [
           `-key-file=${keyFilePath}`,
           `-cert-file=${certFilePath}`,
-          'localhost', '127.0.0.1', '::1'
-        ]
-        childProcess.execFileSync(mkcertBinary, createCertificateArguments, mkcertProcessOptions)
+          'localhost'
+        ].concat(localIPv4Addresses)
+
+        childProcess.execFileSync(mkcertBinary, certificateDetails, mkcertProcessOptions)
         log('   📜    ❨auto-encrypt-localhost❩ Local TLS certificates created.')
       } catch (error) {
         log('\n', error)
