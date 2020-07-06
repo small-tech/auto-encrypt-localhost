@@ -6,6 +6,8 @@ Automatically provisions and installs locally-trusted TLS certificates for Node.
 
 Before creating your HTTPS server, uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
 
+You can reach your server via the local loopback addresses (localhost, 127.0.0.1) on the device itself and also from other devices on the local area network by using your device’s external IPv4 address.
+
 ## Installation
 
 ```sh
@@ -45,9 +47,19 @@ server.listen(() => {
 })
 ```
 
-PS. You can find this example in the _example/_ folder in the source code. Run it by typing `node example`.
+You can now reach your server via https://localhost, https://127.0.0.1, and via its external IPv4 address on your local area network. To find out what that is, you can run the following in the Node interpreter:
+
+```js
+Object.entries(os.networkInterfaces())
+  .map(iface =>
+    iface[1].filter(addresses =>
+      addresses.family === 'IPv4')
+      .map(addresses => addresses.address)).flat()
+```
 
 Note that on Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you (or to see how to implement privilege escalation seamlessly in your own servers, see [Site.js](https://sitejs.org)).
+
+You can find this example in the _example/_ folder in the source code. Run it by typing `node example`.
 
 ## Configuration
 
