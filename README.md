@@ -57,6 +57,8 @@ Object.entries(os.networkInterfaces())
       .map(addresses => addresses.address)).flat()
 ```
 
+To access your local machine from a different device on your local area network, you must transfer the public key of your generated local root certificate authority to that device and install and trust it. By default, once you’ve created your first server, you can find the key at `~/.small-tech/auto-encrypt-localhost/rootCA.pem`. For more details, please refer to [the relevant section in the mkcert documentation](https://github.com/FiloSottile/mkcert#mobile-devices).
+
 Note that on Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you (or to see how to implement privilege escalation seamlessly in your own servers, see [Site.js](https://sitejs.org)).
 
 You can find this example in the _example/_ folder in the source code. Run it by typing `node example`.
