@@ -5,7 +5,8 @@ const bent = require('bent')
 const test = require('tape')
 const AutoEncryptLocalhost = require('..')
 
-const getHttpsString = bent('GET', 'string')
+const downloadString = bent('GET', 'string')
+const downloadBuffer = bent('GET', 'buffer')
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -49,7 +50,7 @@ test('certificate creation', async t => {
     })
   })
 
-  const response = await getHttpsString('https://localhost')
+  const response = await downloadString('https://localhost')
 
   t.strictEquals(response, 'ok', 'Response from server is as expected for access via localhost.')
 
@@ -62,9 +63,15 @@ test('certificate creation', async t => {
         .map(addresses => addresses.address)).flat()
 
   await asyncForEach(localIPv4Addresses, async localIPv4Address => {
-    const response = await getHttpsString(`https://${localIPv4Address}`)
+    const response = await downloadString(`https://${localIPv4Address}`)
     t.strictEquals(response, 'ok', `Response from server is as expected for access via ${localIPv4Address}`)
   })
+
+  // Test downloading the local root certificate authority public key via /.ca route.
+  const downloadedRootCABuffer = await downloadBuffer('http://localhost/.ca')
+  const localRootCABuffer = fs.readFileSync(path.join(AutoEncryptLocalhost.settingsPath, 'rootCA.pem'))
+
+  t.strictEquals(Buffer.compare(localRootCABuffer, downloadedRootCABuffer), 0, 'The local root certificate authority public key is served correctly.')
 
   server.close()
 

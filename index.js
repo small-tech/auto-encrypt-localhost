@@ -15,6 +15,7 @@ const childProcess               = require('child_process')
 const syswidecas                 = require('syswide-cas')
 const mkcertBinaryForThisMachine = require('./lib/mkcertBinaryForThisMachine')
 const installCertutil            = require('./lib/installCertutil')
+const HttpServer                 = require('./lib/HttpServer')
 const { log }                    = require('./lib/util/log')
 
 /**
@@ -68,6 +69,8 @@ class AutoEncryptLocalhost {
 
     // Ensure the Auto Encrypt Localhost directory exists.
     fs.ensureDirSync(settingsPath)
+
+    this.settingsPath = settingsPath
 
     // Get a path to the mkcert binary for this machine.
     const mkcertBinary = mkcertBinaryForThisMachine(settingsPath)
@@ -136,6 +139,35 @@ class AutoEncryptLocalhost {
     options.cert = fs.readFileSync(certFilePath, 'utf-8')
 
     const server = https.createServer(options, listener)
+
+    //
+    // Monkey-patch the server.
+    //
+    server.__autoEncryptLocalhost__self = this
+
+    // Monkey-patch the server’s listen method so that we can start up the HTTP
+    // Server at the same time.
+    server.__autoEncryptLocalhost__originalListen = server.listen
+    server.listen = function(...args) {
+      // Start the HTTP server.
+      HttpServer.getSharedInstance(settingsPath).then(() => {
+        // Start the HTTPS server.
+        return this.__autoEncryptLocalhost__originalListen.apply(this, args)
+      })
+    }
+
+
+    // Monkey-patch the server’s close method so that we can perform clean-up and
+    // shut down the HTTP server transparently when server.close() is called.
+    server.__autoEncryptLocalhost__originalClose = server.close
+    server.close = function (...args) {
+      // Shut down the HTTP server.
+      HttpServer.destroySharedInstance().then(() => {
+        // Shut down the HTTPS server.
+        return this.__autoEncryptLocalhost__originalClose.apply(this, args)
+      })
+    }
+
     return server
   }
 }

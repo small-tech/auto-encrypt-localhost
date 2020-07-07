@@ -33,6 +33,8 @@ npm i @small-tech/auto-encrypt-localhost
 
 ### Example
 
+(You can find this example in the _example/_ folder in the source code. Run it by typing `node example`.)
+
 ```js
 // Create an https server using locally-trusted certificates.
 
@@ -57,11 +59,21 @@ Object.entries(os.networkInterfaces())
       .map(addresses => addresses.address)).flat()
 ```
 
-To access your local machine from a different device on your local area network, you must transfer the public key of your generated local root certificate authority to that device and install and trust it. By default, once you’ve created your first server, you can find the key at `~/.small-tech/auto-encrypt-localhost/rootCA.pem`. For more details, please refer to [the relevant section in the mkcert documentation](https://github.com/FiloSottile/mkcert#mobile-devices).
+### Accessing your local machine from other devices on your local area network
+
+To access your local machine from a different device on your local area network, you must transfer the public key of your generated local root certificate authority to that device and install and trust it.
+
+For example, hit the `/.ca` route on the external IPv4 address of your local machine from your iPhone. e.g., if your local machine is reachable via 192.168.2.42 on your local area network, going to the following addres will prompt you to install the public key (‘profile‘) on your iPhone. You will still have to go to Settings →  General → About → :
+
+```
+http://192.168.2.42/.ca
+```
+
+You can also tranfer your key manually. You can find the key at `~/.small-tech/auto-encrypt-localhost/rootCA.pem` after you’ve created at least one server. For more details on transferring your key to other devices, please refer to [the relevant section in the mkcert documentation](https://github.com/FiloSottile/mkcert#mobile-devices).
+
+### A note on privileged ports on Linux
 
 Note that on Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you (or to see how to implement privilege escalation seamlessly in your own servers, see [Site.js](https://sitejs.org)).
-
-You can find this example in the _example/_ folder in the source code. Run it by typing `node example`.
 
 ## Configuration
 
