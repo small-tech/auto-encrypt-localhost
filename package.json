@@ -1,6 +1,6 @@
 {
   "name": "@small-tech/auto-encrypt-localhost",
-  "version": "5.4.0",
+  "version": "5.4.1",
   "description": "Automatically provisions and installs locally-trusted TLS certificates for Node.js https servers (including Express.js, etc.) using mkcert.",
   "keywords": [
     "mkcert",

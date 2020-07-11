@@ -14,6 +14,16 @@ You can reach your server via the local loopback addresses (localhost, 127.0.0.1
 npm i @small-tech/auto-encrypt-localhost
 ```
 
+### On Linux
+
+Make sure you disable privileged ports:
+
+```
+sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
+```
+
+(On Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you – or to see how to implement privilege escalation seamlessly in your own servers – see [Site.js](https://sitejs.org)).
+
 ## Usage
 
 ### Instructions
@@ -78,9 +88,6 @@ The browser will download the local root certificate authority’s public key an
 
 You can also transfer your key manually. You can find the key at `~/.small-tech/auto-encrypt-localhost/rootCA.pem` after you’ve created at least one server. For more details on transferring your key to other devices, please refer to [the relevant section in the mkcert documentation](https://github.com/FiloSottile/mkcert#mobile-devices).
 
-### A note on privileged ports on Linux
-
-Note that on Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you (or to see how to implement privilege escalation seamlessly in your own servers, see [Site.js](https://sitejs.org)).
 
 ## Configuration
 
