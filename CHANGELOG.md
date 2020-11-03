@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2020-11-03
+
+### Changed
+
+  - __Breaking change:__ Running multiple servers at different HTTPS ports no longer results in an error due to port 80 being unavailable for the HTTP Server. However, know that only the first server will get the HTTP Server at port 80 that redirects HTTP calls to HTTPS and also serves your local root certificate authority public key. (#14)
+
 ## [5.4.1] - 2020-07-11
 
 ### Changed

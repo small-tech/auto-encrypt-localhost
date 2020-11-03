@@ -69,8 +69,11 @@ Object.entries(os.networkInterfaces())
       .map(addresses => addresses.address)).flat()
 ```
 
-### Accessing your local machine from other devices on your local area network
+### Multiple servers
 
+You are not limited to running your server on port 444. You can listen on any port you like and you can have multiple servers with the following caveat: the HTTP server that redirects HTTP calls to HTTPS and serves your local root certificate authority public key (see below) will only be created for the first server and then only if port 80 is free.
+
+### Accessing your local machine from other devices on your local area network
 
 You can access local servers via their IPv4 address over a local area network.
 

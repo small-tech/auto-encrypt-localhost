@@ -92,5 +92,31 @@ test('certificate creation', async t => {
   t.ok(fs.existsSync(path.join(customSettingsPath, 'localhost.pem')), '(Custom settings path) Local certificate exists.')
   t.ok(fs.existsSync(path.join(customSettingsPath, 'localhost-key.pem')), '(Custom settings path) Local certificate private key exists.')
 
-  t.end()
+  server2.close(() => {
+    t.end()
+  })
+})
+
+
+test ('multiple servers', t => {
+  const server1Response = 'Server 1'
+  const server2Response = 'Server 2'
+  const server1 = AutoEncryptLocalhost.https.createServer((request, response) => { response.end(server1Response) })
+  server1.listen(443, () => {
+    const server2 = AutoEncryptLocalhost.https.createServer((request, response) => { response.end(server2Response) })
+    server2.listen(444, async () => {
+      const result1 = await downloadString('https://localhost')
+      const result2 = await downloadString('https://localhost:444')
+
+      t.strictEquals(result1, server1Response, 'Server 1 response is as expected.')
+      t.strictEquals(result2, server2Response, 'Server 2 response is as expected.')
+
+      server1.close(() => {
+        server2.close(() => {
+          t.end()
+        })
+      })
+    })
+  })
+
 })
