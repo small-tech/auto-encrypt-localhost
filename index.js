@@ -3,7 +3,7 @@
  * (including Express.js, etc.) using mkcert.
  *
  * @module @small-tech/auto-encrypt-localhost
- * @copyright © 2020 Aral Balkan, Small Technology Foundation.
+ * @copyright © 2020-2021 Aral Balkan, Small Technology Foundation.
  * @license AGPLv3 or later.
  */
 
