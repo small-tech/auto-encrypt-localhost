@@ -25,8 +25,8 @@
     "start": "node index.js",
     "test": "QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
     "coverage": "QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
-    "test-debug": "esm-tape-runner 'test/**/*.js' | tap-monkey",
-    "coverage-debug": "c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
+    "test-debug": "esm-tape-runner 'test/**/*.js'",
+    "coverage-debug": "c8 esm-tape-runner 'test/**/*.js'",
     "generate-dependency-diagram": "mkdir -p artefacts && node_modules/.bin/depcruise --max-depth 1 --output-type dot index.js | dot -T svg > artefacts/dependency-graph.svg",
     "generate-developer-documentation": "npm run generate-dependency-diagram && node_modules/.bin/jsdoc2md --private --template developer-documentation.hbs --files index.js > developer-documentation.md"
   },
