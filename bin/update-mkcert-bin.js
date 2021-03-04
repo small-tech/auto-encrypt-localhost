@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
-const https = require('https')
-const fs = require('fs-extra')
-const childProcess = require('child_process')
-const path = require('path')
-const assert = require('assert')
+import https from 'https'
+import fs from 'fs-extra'
+import childProcess from 'child_process'
+import path from 'path'
+import assert from 'assert'
+
+const __dirname = new URL('.', import.meta.url).pathname
 
 async function secureGet (url) {
   return new Promise((resolve, reject) => {

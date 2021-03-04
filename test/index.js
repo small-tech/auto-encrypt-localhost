@@ -1,9 +1,9 @@
-const os = require('os')
-const fs = require('fs-extra')
-const path = require('path')
-const bent = require('bent')
-const test = require('tape')
-const AutoEncryptLocalhost = require('..')
+import os from 'os'
+import fs from 'fs-extra'
+import path from 'path'
+import bent from 'bent'
+import test from 'tape'
+import AutoEncryptLocalhost from '../index.js'
 
 const downloadString = bent('GET', 'string')
 const downloadBuffer = bent('GET', 'buffer')
@@ -15,7 +15,7 @@ async function asyncForEach(array, callback) {
 }
 
 test('certificate creation', async t => {
-  // t.plan(12)
+  t.plan(16)
 
   const defaultSettingsPath = path.join(os.homedir(), '.small-tech.org', 'auto-encrypt-localhost')
 
@@ -73,7 +73,8 @@ test('certificate creation', async t => {
 
   t.strictEquals(Buffer.compare(localRootCABuffer, downloadedRootCABuffer), 0, 'The local root certificate authority public key is served correctly.')
 
-  server.close()
+  // Wait the for the first server to close.
+  await new Promise((resolve, reject) => { server.close(() => { resolve() }) })
 
   //
   // Custom settings path.
@@ -92,9 +93,10 @@ test('certificate creation', async t => {
   t.ok(fs.existsSync(path.join(customSettingsPath, 'localhost.pem')), '(Custom settings path) Local certificate exists.')
   t.ok(fs.existsSync(path.join(customSettingsPath, 'localhost-key.pem')), '(Custom settings path) Local certificate private key exists.')
 
-  server2.close(() => {
-    t.end()
-  })
+  // Wait for the second server to close.
+  await new Promise((resolve, reject) => { server2.close(() => { resolve() }) })
+
+  t.end()
 })
 
 
@@ -118,5 +120,4 @@ test ('multiple servers', t => {
       })
     })
   })
-
 })

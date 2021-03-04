@@ -7,16 +7,16 @@
  * @license AGPLv3 or later.
  */
 
-const os                         = require('os')
-const fs                         = require('fs-extra')
-const path                       = require('path')
-const https                      = require('https')
-const childProcess               = require('child_process')
-const syswidecas                 = require('syswide-cas')
-const mkcertBinaryForThisMachine = require('./lib/mkcertBinaryForThisMachine')
-const installCertutil            = require('./lib/installCertutil')
-const HttpServer                 = require('./lib/HttpServer')
-const { log }                    = require('./lib/util/log')
+import os from 'os'
+import fs from 'fs-extra'
+import path from 'path'
+import https from 'https'
+import childProcess from 'child_process'
+import syswidecas from 'syswide-cas'
+import mkcertBinaryForThisMachine from './lib/mkcertBinaryForThisMachine.js'
+import installCertutil from './lib/installCertutil.js'
+import HttpServer from './lib/HttpServer.js'
+import { log } from './lib/util/log.js'
 
 /**
  * Auto Encrypt Localhost is a static class. Please do not instantiate.
@@ -25,13 +25,13 @@ const { log }                    = require('./lib/util/log')
  *
  * @alias module:@small-tech/auto-encrypt-localhost
  */
-class AutoEncryptLocalhost {
+export default class AutoEncryptLocalhost {
   /**
    * By aliasing the https property to the AutoEncryptLocalhost static class itself, we enable
    * people to add AutoEncryptLocalhost to their existing apps by requiring the module
    * and prefixing their https.createServer(…) line with AutoEncryptLocalhost:
    *
-   * @example const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+   * @example import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
    * const server = AutoEncryptLocalhost.https.createServer()
    *
    * @static
@@ -171,5 +171,3 @@ class AutoEncryptLocalhost {
     return server
   }
 }
-
-module.exports = AutoEncryptLocalhost
