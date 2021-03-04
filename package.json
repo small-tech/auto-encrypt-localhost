@@ -22,6 +22,7 @@
     "lib"
   ],
   "scripts": {
+    "postinstall": "node bin/install-mkcert.js",
     "start": "node index.js",
     "test": "QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
     "coverage": "QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",

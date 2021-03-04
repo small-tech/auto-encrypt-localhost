@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.0.0] - in progress
 
+This version is optimised for use on development machines via npm install. It carries out the mkcert binary installation in a postinstall script. In version 6.x and earlier, all binaries for all platforms were bundled as the library also supported use from a binary install (see [Site.js](https://sitejs.org)). The 6.x branch will still be updated with new mkcert versions but the 7.x and later versions will be used in [Place](https://github.com/small-tech/place).
+
 ### Changed
 
   - Uses ECMAScript Modules (ESM; es6 modules)
-  - mkcert binary is now downloaded during installation
+  - (Breaking) mkcert binary is now downloaded during installation.
+  - (Breaking) No longer copies the mkcert binary to the settings path.
 
 ## [6.1.0] - 2020-11-04
 

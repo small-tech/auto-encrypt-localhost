@@ -56,10 +56,7 @@ async function secureStreamToFile (url, filePath) {
 // Install the latest mkcert binary.
 //
 
-console.log('')
-console.log(' Installing latest mkcert binary')
-console.log(' ═══════════════════════════════')
-console.log('')
+process.stdout.write('> Installing latest mkcert binary… ')
 
 // This is the directory we will save the binary into.
 // (Placing it here for backwards compatibility with < v7.0.0 releases).
@@ -75,4 +72,4 @@ const binaryRedirectUrl = (await secureGet(mkcertBinaryUrl)).location
 const binaryPath = path.join(mkcertBinariesDirectory, binaryName)
 await secureStreamToFile(binaryRedirectUrl, binaryPath)
 
-console.log(' Done.\n')
+process.stdout.write('done.\n')
