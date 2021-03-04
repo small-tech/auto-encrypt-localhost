@@ -11,7 +11,7 @@ import https from 'https'
 import fs from 'fs-extra'
 import path from 'path'
 
-import { binaryName } from '../lib/mkcert.js'
+import { version, binaryName } from '../lib/mkcert.js'
 
 const __dirname = new URL('.', import.meta.url).pathname
 
@@ -69,10 +69,10 @@ const mkcertBinariesDirectory = path.resolve(path.join(__dirname, '..', 'mkcert-
 fs.removeSync(mkcertBinariesDirectory)
 fs.mkdirpSync(mkcertBinariesDirectory)
 
-const mkcertBinaryUrl = `https://github.com/FiloSottile/mkcert/releases/download/v${latestMkcertVersion}/${binaryName}`
+const mkcertBinaryUrl = `https://github.com/FiloSottile/mkcert/releases/download/v${version}/${binaryName}`
 
 const binaryRedirectUrl = (await secureGet(mkcertBinaryUrl)).location
-const binaryPath = path.join(mkcertBinariesDirectory, mkcertBinary.binaryName)
+const binaryPath = path.join(mkcertBinariesDirectory, binaryName)
 await secureStreamToFile(binaryRedirectUrl, binaryPath)
 
 console.log(' Done.\n')
