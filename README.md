@@ -4,7 +4,7 @@ Automatically provisions and installs locally-trusted TLS certificates for Node.
 
 ## How it works
 
-Before creating your HTTPS server, uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
+Before creating your HTTPS server, Auto Encrypt Localhost uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
 
 You can reach your server via the local loopback addresses (localhost, 127.0.0.1) on the device itself and also from other devices on the local area network by using your device’s external IPv4 address.
 
@@ -13,6 +13,10 @@ You can reach your server via the local loopback addresses (localhost, 127.0.0.1
 ```sh
 npm i @small-tech/auto-encrypt-localhost
 ```
+
+__Version 7.x+:__ As a post-install step, Auto Encrypt Localhost will install the correct mkcert binary for your machine in its _mkcert-bin_ folder and mark is as executable.
+
+__Version 6.x and below:__ All mkcert binaries for all supported platforms are included in the package. This is to support use of Auto Encrypt Localhost in single binary deployments (e.g., using a binary compiler like [Nexe](https://github.com/nexe/nexe)). The 6.x branch will be maintained with new versions of mkcert for as long as maintain [Site.js](https://sitejs.org), which needs this feature. Also note that versions 6.x and below use CommonJS whereas version 7.x and above use ECMAScript Modules (ESM; es6 modules).
 
 ### On Linux
 
@@ -31,7 +35,7 @@ sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
 1. Import the module:
 
     ```js
-    const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+    import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
     ```
 
 2. Prefix your server creation code with a reference to the Auto Encrypt Localhost class:
@@ -48,7 +52,7 @@ sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
 ```js
 // Create an https server using locally-trusted certificates.
 
-const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
 
 const server = AutoEncryptLocalhost.https.createServer((request, response) => {
   response.end('Hello, world!')
@@ -59,7 +63,7 @@ server.listen(() => {
 })
 ```
 
-You can now reach your server via https://localhost, https://127.0.0.1, and via its external IPv4 address on your local area network. To find out what that is, you can run the following in the Node interpreter:
+You can now reach your server via https://localhost, https://127.0.0.1, and via its external IPv4 address(es) on your local area network. To find the list of IP addresses that your local server is reachable from, you can run the following code in the Node interpreter:
 
 ```js
 Object.entries(os.networkInterfaces())
@@ -91,15 +95,16 @@ The browser will download the local root certificate authority’s public key an
 
 You can also transfer your key manually. You can find the key at `~/.small-tech/auto-encrypt-localhost/rootCA.pem` after you’ve created at least one server. For more details on transferring your key to other devices, please refer to [the relevant section in the mkcert documentation](https://github.com/FiloSottile/mkcert#mobile-devices).
 
-
 ## Configuration
 
 You can specify a custom settings path for your local certificate authority and certificate data to be stored in by adding the Auto Encrypt Localhost-specific `settingsPath` option to the options object you pass to the Node `https` server. If not specified, the default settings path (_~/.small-tech.org/auto-encrypt-localhost/_) is used.
 
+__Version 7.x+:__ Note that the mkcert binary will no longer be copied to your settings path. It is run from the _mkcert-bin_ folder in the installed npm package. If you need the binary copied to your settings path (e.g., so that it can be run from a Nexe binary), please use version 6.x.
+
 ### Example
 
 ```js
-const AutoEncrypt = require('@small-tech/auto-encrypt-localhost')
+import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
 
 const options = {
   // Regular HTTPS server and TLS server options, if any, go here.
@@ -151,20 +156,22 @@ Your certificates will be created in the _~/.small-tech.org/auto-encrypt-localho
 
 Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores).
 
+__Version 7.x:__ currently not tested under Windows. May not be able to set the executable bit on the binary download if that’s necessary. TODO: remove this notice once it’s been tested.
+
 ## Related projects
 
 From lower-level to higher-level:
 
 ### Auto Encrypt
 
-  - Source: https://source.small-tech.org/site.js/lib/auto-encrypt
+  - Source: https://github.com/small-tech/auto-encrypt
   - Package: [@small-tech/auto-encrypt](https://www.npmjs.com/package/@small-tech/auto-encrypt)
 
 Adds automatic provisioning and renewal of [Let’s Encrypt](https://letsencrypt.org) TLS certificates with [OCSP Stapling](https://letsencrypt.org/docs/integration-guide/#implement-ocsp-stapling) to [Node.js](https://nodejs.org) [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
 
 ### HTTPS
 
-  - Source: https://source.small-tech.org/site.js/lib/https
+  - Source: https://github.com/small-tech/https
   - Package: [@small-tech/https](https://www.npmjs.com/package/@small-tech/https)
 
 A drop-in replacement for the [standard Node.js HTTPS module](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) with automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt.
@@ -172,9 +179,15 @@ A drop-in replacement for the [standard Node.js HTTPS module](https://nodejs.org
 ### Site.js
 
   - Web site: https://sitejs.org
-  - Source: https://source.small-tech.org/site.js/app
+  - Source: https://github.com/small-tech/site.js
 
-A complete [small technology](https://small-tech.org/about/#small-technology) tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
+A tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
+
+### Place (work-in-progress)
+
+Small Web Protocol Reference Server.
+
+  - Source: https://github.com/small-tech/place
 
 ## A note on Linux and the security farce that is “privileged ports”
 
@@ -207,7 +220,7 @@ We exist in part thanks to patronage by people like you. If you share [our visio
 
 ## Copyright
 
-Copyright &copy; [Aral Balkan](https://ar.al), [Small Technology Foundation](https://small-tech.org).
+Copyright &copy; 2019-2021 [Aral Balkan](https://ar.al), [Small Technology Foundation](https://small-tech.org).
 
 ## License
 
