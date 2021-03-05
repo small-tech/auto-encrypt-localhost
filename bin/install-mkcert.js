@@ -56,7 +56,7 @@ async function secureStreamToFile (url, filePath) {
 // Install the latest mkcert binary.
 //
 
-process.stdout.write('> Installing latest mkcert binary… ')
+process.stdout.write(`> Installing mkcert v${version} binary… `)
 
 // This is the directory we will save the binary into.
 // (Placing it here for backwards compatibility with < v7.0.0 releases).
