@@ -72,4 +72,7 @@ const binaryRedirectUrl = (await secureGet(mkcertBinaryUrl)).location
 const binaryPath = path.join(mkcertBinariesDirectory, binaryName)
 await secureStreamToFile(binaryRedirectUrl, binaryPath)
 
+// Make the binary executable.
+fs.chmodSync(binaryPath, 0o755)
+
 process.stdout.write('done.\n')

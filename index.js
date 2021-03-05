@@ -13,7 +13,7 @@ import path from 'path'
 import https from 'https'
 import childProcess from 'child_process'
 import syswidecas from 'syswide-cas'
-import mkcertBinaryForThisMachine from './lib/mkcertBinaryForThisMachine.js'
+import { binaryPath as mkcertBinary } from './lib/mkcert.js'
 import installCertutil from './lib/installCertutil.js'
 import HttpServer from './lib/HttpServer.js'
 import { log } from './lib/util/log.js'
@@ -72,9 +72,6 @@ export default class AutoEncryptLocalhost {
 
     this.settingsPath = settingsPath
 
-    // Get a path to the mkcert binary for this machine.
-    const mkcertBinary = mkcertBinaryForThisMachine(settingsPath)
-
     // Create certificates.
     if (!allOK()) {
       log('   📜    ❨auto-encrypt-localhost❩ Setting up…')
@@ -92,37 +89,37 @@ export default class AutoEncryptLocalhost {
       }
       mkcertProcessOptions.env.CAROOT = settingsPath
 
-      try {
-        // Create the local certificate authority.
-        log('   📜    ❨auto-encrypt-localhost❩ Creating local certificate authority (local CA) using mkcert…')
-        childProcess.execFileSync(mkcertBinary, ['-install'], mkcertProcessOptions)
-        log('   📜    ❨auto-encrypt-localhost❩ Local certificate authority created.')
-        // Create the local certificate.
-        log('   📜    ❨auto-encrypt-localhost❩ Creating local TLS certificates using mkcert…')
+      // Create the local certificate authority.
+      log('   📜    ❨auto-encrypt-localhost❩ Creating local certificate authority (local CA) using mkcert…')
+      childProcess.execFileSync(mkcertBinary, ['-install'], mkcertProcessOptions)
+      log('   📜    ❨auto-encrypt-localhost❩ Local certificate authority created.')
 
-        // Support all local interfaces so that the machine can be reached over the local network via IPv4.
-        // This is very useful for testing with multiple devices over the local area network without needing to expose
-        // the machine over the wide area network/Internet using a service like ngrok.
-        const localIPv4Addresses =
-        Object.entries(os.networkInterfaces())
-        .map(iface =>
-          iface[1].filter(addresses =>
-            addresses.family === 'IPv4')
-            .map(addresses => addresses.address)).flat()
+      // Create the local certificate.
+      log('   📜    ❨auto-encrypt-localhost❩ Creating local TLS certificates using mkcert…')
 
-        const certificateDetails = [
-          `-key-file=${keyFilePath}`,
-          `-cert-file=${certFilePath}`,
-          'localhost'
-        ].concat(localIPv4Addresses)
+      // Support all local interfaces so that the machine can be reached over the local network via IPv4.
+      // This is very useful for testing with multiple devices over the local area network without needing to expose
+      // the machine over the wide area network/Internet using a service like ngrok.
+      const localIPv4Addresses =
+      Object.entries(os.networkInterfaces())
+      .map(iface =>
+        iface[1].filter(addresses =>
+          addresses.family === 'IPv4')
+          .map(addresses => addresses.address)).flat()
 
-        childProcess.execFileSync(mkcertBinary, certificateDetails, mkcertProcessOptions)
-        log('   📜    ❨auto-encrypt-localhost❩ Local TLS certificates created.')
-      } catch (error) {
-        log('\n', error)
-      }
+      const certificateDetails = [
+        `-key-file=${keyFilePath}`,
+        `-cert-file=${certFilePath}`,
+        'localhost'
+      ].concat(localIPv4Addresses)
 
+      childProcess.execFileSync(mkcertBinary, certificateDetails, mkcertProcessOptions)
+      log('   📜    ❨auto-encrypt-localhost❩ Local TLS certificates created.')
+
+      // This should never happen as an error in the above, if there is one,
+      // should exit the process, but just in case.
       if (!allOK()) {
+        console.log('Could not find all necessary certificate information. Panic!')
         process.exit(1)
       }
     } else {
