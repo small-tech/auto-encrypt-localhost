@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.1] - 2021-03-06
+
+### Fixed
+
+  - Added missing bin folder to the npm package.
+
 ## [7.0.0] - 2021-03-06
 
 This version is optimised for use on development machines via npm install. It carries out the mkcert binary installation in a postinstall script. In version 6.x and earlier, all binaries for all platforms were bundled as the library also supported use from a binary install (see [Site.js](https://sitejs.org)). The 6.x branch will still be updated with new mkcert versions but the 7.x and later versions will be used in [Place](https://github.com/small-tech/place).
