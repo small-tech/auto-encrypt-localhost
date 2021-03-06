@@ -1,6 +1,6 @@
 // Create an https server using locally-trusted certificates.
 
-const AutoEncryptLocalhost = require('../index')
+import AutoEncryptLocalhost from '../index.js'
 
 const server = AutoEncryptLocalhost.https.createServer((request, response) => {
   response.end('Hello, world!')

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.0] - 2021-03-06
+
+This version is optimised for use on development machines via npm install. It carries out the mkcert binary installation in a postinstall script. In version 6.x and earlier, all binaries for all platforms were bundled as the library also supported use from a binary install (see [Site.js](https://sitejs.org)). The 6.x branch will still be updated with new mkcert versions but the 7.x and later versions will be used in [Place](https://github.com/small-tech/place).
+
+### Changed
+
+  - Uses ECMAScript Modules (ESM; es6 modules)
+  - __Breaking change:__ mkcert binary is now downloaded during installation and the root certificate authority and TLS certificates are created at this time also.
+  - __Breaking change:__ The settings path is no longer configurable and is shared by all installations of this package. This means whenever you install this package, it will update to the latest version of mkcert and recreate the root certificate authorities and local certificates and these will be used by all instances of Auto Encrypt Localhost on your dev machine (and this is most likely the behaviour you want).
+  - __Breaking change:__ Removed command-line interface as it is no longer nececessary. Your local certificate authority and TLS certificates are ready to be used once your npm install is complete.
+
 ## [6.1.0] - 2020-11-04
 
 ### Changed

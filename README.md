@@ -4,25 +4,15 @@ Automatically provisions and installs locally-trusted TLS certificates for Node.
 
 ## How it works
 
-Before creating your HTTPS server, uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
+At installation time, Auto Encrypt Localhost uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
 
-You can reach your server via the local loopback addresses (localhost, 127.0.0.1) on the device itself and also from other devices on the local area network by using your device’s external IPv4 address.
+At runtime, you can reach your server via the local loopback addresses (localhost, 127.0.0.1) on the device itself and also from other devices on the local area network by using your device’s external IPv4 address(es).
 
 ## Installation
 
 ```sh
 npm i @small-tech/auto-encrypt-localhost
 ```
-
-### On Linux
-
-Make sure you disable privileged ports:
-
-```
-sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
-```
-
-(On Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you – or to see how to implement privilege escalation seamlessly in your own servers – see [Site.js](https://sitejs.org)).
 
 ## Usage
 
@@ -31,7 +21,7 @@ sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
 1. Import the module:
 
     ```js
-    const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+    import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
     ```
 
 2. Prefix your server creation code with a reference to the Auto Encrypt Localhost class:
@@ -48,18 +38,18 @@ sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
 ```js
 // Create an https server using locally-trusted certificates.
 
-const AutoEncryptLocalhost = require('@small-tech/auto-encrypt-localhost')
+import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
 
 const server = AutoEncryptLocalhost.https.createServer((request, response) => {
   response.end('Hello, world!')
 })
 
-server.listen(() => {
+server.listen(443, () => {
   console.log('Web server is running at https://localhost')
 })
 ```
 
-You can now reach your server via https://localhost, https://127.0.0.1, and via its external IPv4 address on your local area network. To find out what that is, you can run the following in the Node interpreter:
+You can now reach your server via https://localhost, https://127.0.0.1, and via its external IPv4 address(es) on your local area network. To find the list of IP addresses that your local server is reachable from, you can run the following code in the Node interpreter:
 
 ```js
 Object.entries(os.networkInterfaces())
@@ -68,6 +58,48 @@ Object.entries(os.networkInterfaces())
       addresses.family === 'IPv4')
       .map(addresses => addresses.address)).flat()
 ```
+
+### Plain Node.js example
+
+If you just want to use the TLS certificates generated at installation time without using the Auto Encrypt Localhost library itself at runtime, you should install Auto Encrypt Localhost into your `dev-dependencies`. Post install, you can find your certificates in the _~/.small-tech.org/auto-encrypt-localhost_ folder.
+
+Here’s a somewhat equivalent example to the one above but using Node’s regular `https` module instead of Auto Encrypt Localhost at runtime:
+
+```js
+import os from 'os'
+import fs from 'fs'
+import path from 'path'
+import https from 'https'
+
+const certificatesPath = path.join(os.homedir(), '.small-tech.org', 'auto-encrypt-localhost')
+const keyFilePath = path.join(certificatesPath, 'localhost-key.pem')
+const certFilePath = path.join(certificatesPath, 'localhost.pem')
+
+const options = {
+  key: fs.readFileSync(keyFilePath, 'utf-8'),
+  cert: fs.readFileSync(certFilePath, 'utf-8')
+}
+
+const server = https.createServer(options, (request, response) => {
+  response.end('Hello, world!')
+})
+
+server.listen(443, () => {
+  console.log('Web server is running at https://localhost')
+})
+```
+
+_Note that if you don’t use Auto Encrypt Localhost at runtime, you won’t get some of the benefits that it provides, like automatically adding the certificate authority to Node’s trust store (for hitting your server using Node.js without certificate errors, the `/.ca` convenience route, and HTTP to HTTPS forwarding, etc.)_
+
+### On Linux
+
+To access your server on port 443, make sure you’ve disabled privileged ports:
+
+```
+sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
+```
+
+(On Linux, ports 80 and 443 require special privileges. Please see [A note on Linux and the security farce that is “privileged ports”](#a-note-on-linux-and-the-security-farce-that-is-priviliged-ports). If you just need a Node web server that handles all that and more for you – or to see how to implement privilege escalation seamlessly in your own servers – see [Site.js](https://sitejs.org)).
 
 ### Multiple servers
 
@@ -91,29 +123,6 @@ The browser will download the local root certificate authority’s public key an
 
 You can also transfer your key manually. You can find the key at `~/.small-tech/auto-encrypt-localhost/rootCA.pem` after you’ve created at least one server. For more details on transferring your key to other devices, please refer to [the relevant section in the mkcert documentation](https://github.com/FiloSottile/mkcert#mobile-devices).
 
-
-## Configuration
-
-You can specify a custom settings path for your local certificate authority and certificate data to be stored in by adding the Auto Encrypt Localhost-specific `settingsPath` option to the options object you pass to the Node `https` server. If not specified, the default settings path (_~/.small-tech.org/auto-encrypt-localhost/_) is used.
-
-### Example
-
-```js
-const AutoEncrypt = require('@small-tech/auto-encrypt-localhost')
-
-const options = {
-  // Regular HTTPS server and TLS server options, if any, go here.
-
-  // Optional Auto Encrypt options:
-  settingsPath: '/custom/settings/path'
-}
-
-// Pass the options object to https.createServer()
-const server = AutoEncryptLocalhost.https.createServer(options, listener)
-
-// …
-```
-
 ## Developer documentation
 
 If you want to help improve Auto Encrypt Localhost or better understand how it is structured and operates, please see the [developer documentation](developer-documentation.md).
@@ -130,26 +139,13 @@ This is [small technology](https://small-tech.org/about/#small-technology).
 
 If you’re evaluating this for a “startup” or an enterprise, let us save you some time: this is not the right tool for you. This tool is for individual developers to build personal web sites and apps for themselves and for others in a non-colonial manner that respects the human rights of the people who use them.
 
-## Command-line interface
-
-### Install
-
-```sh
-npm i -g @small-tech/auto-encrypt-localhost
-```
-
-### Use
-
-```sh
-auto-encrypt-localhost
-```
-Your certificates will be created in the _~/.small-tech.org/auto-encrypt-localhost_ directory.
-
 ## Caveats
 
 ### Windows
 
 Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores).
+
+__Version 7.x is currently not tested under Windows.__ It may not be able to set the executable bit on the binary download if that’s necessary. __This notice will be removed once it’s been tested and confirmed to be working.__
 
 ## Related projects
 
@@ -157,14 +153,14 @@ From lower-level to higher-level:
 
 ### Auto Encrypt
 
-  - Source: https://source.small-tech.org/site.js/lib/auto-encrypt
+  - Source: https://github.com/small-tech/auto-encrypt
   - Package: [@small-tech/auto-encrypt](https://www.npmjs.com/package/@small-tech/auto-encrypt)
 
 Adds automatic provisioning and renewal of [Let’s Encrypt](https://letsencrypt.org) TLS certificates with [OCSP Stapling](https://letsencrypt.org/docs/integration-guide/#implement-ocsp-stapling) to [Node.js](https://nodejs.org) [https](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) servers (including [Express.js](https://expressjs.com/), etc.)
 
 ### HTTPS
 
-  - Source: https://source.small-tech.org/site.js/lib/https
+  - Source: https://github.com/small-tech/https
   - Package: [@small-tech/https](https://www.npmjs.com/package/@small-tech/https)
 
 A drop-in replacement for the [standard Node.js HTTPS module](https://nodejs.org/dist/latest-v12.x/docs/api/https.html) with automatic development-time (localhost) certificates via Auto Encrypt Localhost and automatic production certificates via Auto Encrypt.
@@ -172,9 +168,15 @@ A drop-in replacement for the [standard Node.js HTTPS module](https://nodejs.org
 ### Site.js
 
   - Web site: https://sitejs.org
-  - Source: https://source.small-tech.org/site.js/app
+  - Source: https://github.com/small-tech/site.js
 
-A complete [small technology](https://small-tech.org/about/#small-technology) tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
+A tool for developing, testing, and deploying a secure static or dynamic personal web site or app with zero configuration.
+
+### Place (work-in-progress)
+
+Small Web Protocol Reference Server.
+
+  - Source: https://github.com/small-tech/place
 
 ## A note on Linux and the security farce that is “privileged ports”
 
@@ -207,7 +209,7 @@ We exist in part thanks to patronage by people like you. If you share [our visio
 
 ## Copyright
 
-Copyright &copy; [Aral Balkan](https://ar.al), [Small Technology Foundation](https://small-tech.org).
+Copyright &copy; 2019-2021 [Aral Balkan](https://ar.al), [Small Technology Foundation](https://small-tech.org).
 
 ## License
 
