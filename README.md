@@ -89,7 +89,7 @@ server.listen(443, () => {
 })
 ```
 
-_Note that if you don’t use Auto Encrypt Localhost at runtime, you won’t get some of the benefits that it provides, like automatically adding the certificate authority to Node’s trust store (for hitting your server using Node.js without certificate errors, the `/.ca` convenience route, and HTTP to HTTPS forwarding, etc.)_
+_Note that if you don’t use Auto Encrypt Localhost at runtime, you won’t get some of the benefits that it provides, like automatically adding the certificate authority to Node’s trust store (for hitting your server using Node.js without certificate errors), the `/.ca` convenience route, and HTTP to HTTPS forwarding, etc._
 
 ### On Linux
 
