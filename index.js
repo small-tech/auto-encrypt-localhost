@@ -11,12 +11,8 @@ import os from 'os'
 import fs from 'fs-extra'
 import path from 'path'
 import https from 'https'
-import childProcess from 'child_process'
 import syswidecas from 'syswide-cas'
-import { binaryPath as mkcertBinary } from './lib/mkcert.js'
-import installCertutil from './lib/installCertutil.js'
 import HttpServer from './lib/HttpServer.js'
-import { log } from './lib/util/log.js'
 
 /**
  * Auto Encrypt Localhost is a static class. Please do not instantiate.
@@ -28,7 +24,7 @@ import { log } from './lib/util/log.js'
 export default class AutoEncryptLocalhost {
   /**
    * By aliasing the https property to the AutoEncryptLocalhost static class itself, we enable
-   * people to add AutoEncryptLocalhost to their existing apps by requiring the module
+   * people to add AutoEncryptLocalhost to their existing apps by importing the module
    * and prefixing their https.createServer(…) line with AutoEncryptLocalhost:
    *
    * @example import AutoEncryptLocalhost from '@small-tech/auto-encrypt-localhost'
@@ -37,6 +33,8 @@ export default class AutoEncryptLocalhost {
    * @static
    */
   static get https () { return AutoEncryptLocalhost }
+
+  static settingsPath = path.join(os.homedir(), '.small-tech.org', 'auto-encrypt-localhost')
 
   /**
    * Automatically provisions trusted development-time (localhost) certificates in Node.js via mkcert.
@@ -55,80 +53,26 @@ export default class AutoEncryptLocalhost {
       _options = {}
     }
 
-    const defaultSettingsPath = path.join(os.homedir(), '.small-tech.org', 'auto-encrypt-localhost')
-    const options             = _options             || {}
-    const listener            = _listener            || null
-    const settingsPath        = options.settingsPath || defaultSettingsPath
+    const settingsPath = AutoEncryptLocalhost.settingsPath
+    this.settingsPath = settingsPath
+
+    const options = _options || {}
+    const listener = _listener || null
 
     const keyFilePath  = path.join(settingsPath, 'localhost-key.pem')
     const certFilePath = path.join(settingsPath, 'localhost.pem')
+    const rootCAKeyFilePath = path.join(settingsPath, 'rootCA-key.pem')
+    const rootCACertFilePath = path.join(settingsPath, 'rootCA.pem')
 
-    const allOK = () => {
-      return fs.existsSync(path.join(settingsPath, 'rootCA.pem')) && fs.existsSync(path.join(settingsPath, 'rootCA-key.pem')) && fs.existsSync(path.join(settingsPath, 'localhost.pem')) && fs.existsSync(path.join(settingsPath, 'localhost-key.pem'))
-    }
+    const allOK = fs.existsSync(rootCACertFilePath) && fs.existsSync(rootCAKeyFilePath) && fs.existsSync(certFilePath) && fs.existsSync(keyFilePath)
 
-    // Ensure the Auto Encrypt Localhost directory exists.
-    fs.ensureDirSync(settingsPath)
-
-    this.settingsPath = settingsPath
-
-    // Create certificates.
-    if (!allOK()) {
-      log('   📜    ❨auto-encrypt-localhost❩ Setting up…')
-
-      // On Linux and on macOS, mkcert uses the Mozilla nss library.
-      // Try to install this automatically and warn the person if we can’t so
-      // that they can do it manually themselves.
-      installCertutil()
-
-      // mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
-      // We also pass the rest of the system environment to the spawned processes.
-      const mkcertProcessOptions = {
-        env: process.env,
-        stdio: 'pipe'     // suppress output
-      }
-      mkcertProcessOptions.env.CAROOT = settingsPath
-
-      // Create the local certificate authority.
-      log('   📜    ❨auto-encrypt-localhost❩ Creating local certificate authority (local CA) using mkcert…')
-      childProcess.execFileSync(mkcertBinary, ['-install'], mkcertProcessOptions)
-      log('   📜    ❨auto-encrypt-localhost❩ Local certificate authority created.')
-
-      // Create the local certificate.
-      log('   📜    ❨auto-encrypt-localhost❩ Creating local TLS certificates using mkcert…')
-
-      // Support all local interfaces so that the machine can be reached over the local network via IPv4.
-      // This is very useful for testing with multiple devices over the local area network without needing to expose
-      // the machine over the wide area network/Internet using a service like ngrok.
-      const localIPv4Addresses =
-      Object.entries(os.networkInterfaces())
-      .map(iface =>
-        iface[1].filter(addresses =>
-          addresses.family === 'IPv4')
-          .map(addresses => addresses.address)).flat()
-
-      const certificateDetails = [
-        `-key-file=${keyFilePath}`,
-        `-cert-file=${certFilePath}`,
-        'localhost'
-      ].concat(localIPv4Addresses)
-
-      childProcess.execFileSync(mkcertBinary, certificateDetails, mkcertProcessOptions)
-      log('   📜    ❨auto-encrypt-localhost❩ Local TLS certificates created.')
-
-      // This should never happen as an error in the above, if there is one,
-      // should exit the process, but just in case.
-      if (!allOK()) {
-        console.log('Could not find all necessary certificate information. Panic!')
-        process.exit(1)
-      }
-    } else {
-      log('   📜    ❨auto-encrypt-localhost❩ Local development TLS certificate exists.')
+    if (!allOK) {
+      console.log('Could not find all necessary certificate information. Panic!')
+      process.exit(1)
     }
 
     // Add root store to Node to ensure Node recognises the certificates (e.g., when using https.get(), etc.)
-    const rootCA = path.join(settingsPath, 'rootCA.pem')
-    syswidecas.addCAs(rootCA)
+    syswidecas.addCAs(rootCACertFilePath)
 
     // Load in and return the certificates in an object that can be passed
     // directly to https.createServer() if required.

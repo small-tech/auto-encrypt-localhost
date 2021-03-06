@@ -12,8 +12,8 @@ This version is optimised for use on development machines via npm install. It ca
 ### Changed
 
   - Uses ECMAScript Modules (ESM; es6 modules)
-  - (Breaking) mkcert binary is now downloaded during installation.
-  - (Breaking) No longer copies the mkcert binary to the settings path.
+  - (Breaking) mkcert binary is now downloaded during installation and the root certificate authority and TLS certificates are created at this time also.
+  - (Breaking) The settings path is no longer configurable and is shared by all installations of this package. This means whenever you install this package, it will update to the latest version of mkcert and recreate the root certificate authorities and local certificates and these will be used by all instances of Auto Encrypt Localhost on your dev machine (and this is most likely the behaviour you want).
 
 ## [6.1.0] - 2020-11-04
 
