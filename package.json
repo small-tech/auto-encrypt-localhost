@@ -1,6 +1,6 @@
 {
   "name": "@small-tech/auto-encrypt-localhost",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "description": "Automatically provisions and installs locally-trusted TLS certificates for Node.js https servers (including Express.js, etc.) using mkcert.",
   "keywords": [
     "mkcert",
@@ -22,8 +22,7 @@
     "bin"
   ],
   "scripts": {
-    "postinstall": "node bin/post-install.js",
-    "start": "node index.js",
+    "postinstall": "bin/post-install.js",
     "test": "QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
     "coverage": "QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
     "test-debug": "esm-tape-runner 'test/**/*.js' | tap-monkey",
@@ -53,6 +52,7 @@
     "encodeurl": "^1.0.2",
     "fs-extra": "^8.1.0",
     "server-destroy": "^1.0.1",
+    "sudo-prompt": "^9.2.1",
     "syswide-cas": "^5.3.0"
   },
   "devDependencies": {

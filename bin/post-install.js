@@ -29,6 +29,7 @@ import { version, binaryName } from '../lib/mkcert.js'
 
 import fs from 'fs-extra'
 
+import sudoPrompt from 'sudo-prompt'
 
 async function secureGet (url) {
   return new Promise((resolve, reject) => {
@@ -123,7 +124,25 @@ mkcertProcessOptions.env.CAROOT = settingsPath
 
 // Create the local certificate authority.
 process.stdout.write(`   ╰─ Creating local certificate authority (local CA) using mkcert… `)
-childProcess.execFileSync(mkcertBinary, ['-install'], mkcertProcessOptions)
+
+// We are using the sudo-prompt package here, instead of childProcess.execFileSync() because
+// this script is meant to run as an npm script and it appears that npm scripts fail to show
+// the system sudo prompt (and instead hang).
+//
+// See: https://github.com/npm/cli/issues/2887
+//
+// To workaround this issue, we use sudo-prompt here to display a graphical sudo prompt
+// that works well with npm scripts.
+
+await (() => {
+  return new Promise((resolve, reject) => {
+    sudoPrompt.exec(`${mkcertBinary} -install`, {name: 'Auto Encrypt Localhost'}, function(error, stdout, stderr) {
+      if (error) reject(error)
+      resolve()
+    })
+  })
+})()
+
 process.stdout.write('done.\n')
 
 // Create the local certificate.
@@ -145,7 +164,9 @@ const certificateDetails = [
   'localhost'
 ].concat(localIPv4Addresses)
 
+// We can use a regular execFileSync call here as the sudo permissions will not have timed out yet.
 childProcess.execFileSync(mkcertBinary, certificateDetails, mkcertProcessOptions)
+
 process.stdout.write('done.\n')
 
 // This should never happen as an error in the above, if there is one,
