@@ -99,20 +99,22 @@ process.stdout.write('done.\n')
 //
 // Create the root certificate authority and certificates.
 //
-
+const caCertFilePath = path.join(settingsPath, 'rootCA.pem')
+const caKeyFilePath = path.join(settingsPath, 'rootCA-key.pem')
 const keyFilePath  = path.join(settingsPath, 'localhost-key.pem')
 const certFilePath = path.join(settingsPath, 'localhost.pem')
 
 const allOK = () => {
-  return fs.existsSync(path.join(settingsPath, 'rootCA.pem')) && fs.existsSync(path.join(settingsPath, 'rootCA-key.pem')) && fs.existsSync(path.join(settingsPath, 'localhost.pem')) && fs.existsSync(path.join(settingsPath, 'localhost-key.pem'))
+  return fs.existsSync(caCertFilePath)
+    && fs.existsSync(caKeyFilePath)
+    && fs.existsSync(certFilePath)
+    && fs.existsSync(keyFilePath)
 }
 
 // On Linux and on macOS, mkcert uses the Mozilla nss library.
 // Try to install this automatically and warn the person if we can’t so
 // that they can do it manually themselves.
-process.stdout.write(`   ╰─ Installing certutil if necessary… `)
 installCertutil()
-process.stdout.write('done.\n')
 
 // mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
 // We also pass the rest of the system environment to the spawned processes.
@@ -121,32 +123,6 @@ const mkcertProcessOptions = {
   stdio: 'pipe'     // suppress output
 }
 mkcertProcessOptions.env.CAROOT = settingsPath
-
-// Create the local certificate authority.
-process.stdout.write(`   ╰─ Creating local certificate authority (local CA) using mkcert… `)
-
-// We are using the sudo-prompt package here, instead of childProcess.execFileSync() because
-// this script is meant to run as an npm script and it appears that npm scripts fail to show
-// the system sudo prompt (and instead hang).
-//
-// See: https://github.com/npm/cli/issues/2887
-//
-// To workaround this issue, we use sudo-prompt here to display a graphical sudo prompt
-// that works well with npm scripts.
-
-await (() => {
-  return new Promise((resolve, reject) => {
-    sudoPrompt.exec(`${mkcertBinary} -install`, {name: 'Auto Encrypt Localhost'}, function(error, stdout, stderr) {
-      if (error) reject(error)
-      resolve()
-    })
-  })
-})()
-
-process.stdout.write('done.\n')
-
-// Create the local certificate.
-process.stdout.write('   ╰─ Creating local TLS certificates using mkcert… ')
 
 // Support all local interfaces so that the machine can be reached over the local network via IPv4.
 // This is very useful for testing with multiple devices over the local area network without needing to expose
@@ -162,10 +138,54 @@ const certificateDetails = [
   `-key-file=${keyFilePath}`,
   `-cert-file=${certFilePath}`,
   'localhost'
-].concat(localIPv4Addresses)
+].concat(localIPv4Addresses).join(' ')
 
-// We can use a regular execFileSync call here as the sudo permissions will not have timed out yet.
-childProcess.execFileSync(mkcertBinary, certificateDetails, mkcertProcessOptions)
+const account = os.userInfo().username
+
+// Create the local certificate authority.
+process.stdout.write(`   ╰─ Initialising mkcert… `)
+
+// We are using the sudo-prompt package here, instead of childProcess.execFileSync() because
+// this script is meant to run as an npm script and it appears that npm scripts fail to show
+// the system sudo prompt (and instead hang).
+//
+// See: https://github.com/npm/cli/issues/2887
+//
+// To workaround this issue, we use sudo-prompt here to display a graphical sudo prompt
+// that works well with npm scripts.
+//
+// Since on macOS the certificate files are created with root permissions, we need to set
+// files back to regular account permissions afterwards (this is not an issue on Linux
+// where the files are created with regular account permissions even when the mkcert command
+// is launched using sudo). In any case, because of this, and because we want the person
+// to only enter their password once instead of multiple times, once for each command
+// (due to how sudo-prompt works), we first create a shell script and then we execute that.
+//
+// TODO: Figure out what to do for Windows.
+
+
+const shellScriptTemplate = `#!/bin/bash
+set -e
+# Install mkcert and create the certificate authority
+${mkcertBinary} -install
+
+# Create the certificates
+${mkcertBinary} ${certificateDetails}
+
+# Reset file permissions to regular account
+chown -R ${account} ${settingsPath}
+`
+
+fs.writeFileSync('/tmp/install-mkcert.sh', shellScriptTemplate, {mode: 0o755})
+
+await (() => {
+  return new Promise((resolve, reject) => {
+    sudoPrompt.exec(`/tmp/install-mkcert.sh`, {name: 'Auto Encrypt Localhost'}, function(error, stdout, stderr) {
+      if (error) reject(error)
+      resolve()
+    })
+  })
+})()
 
 process.stdout.write('done.\n')
 
