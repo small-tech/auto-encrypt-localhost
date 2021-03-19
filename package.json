@@ -22,7 +22,7 @@
     "bin"
   ],
   "scripts": {
-    "postinstall": "bin/post-install.js",
+    "postinstall": "node bin/post-install.js",
     "test": "QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
     "coverage": "QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
     "test-debug": "esm-tape-runner 'test/**/*.js' | tap-monkey",

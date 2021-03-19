@@ -155,25 +155,24 @@ process.stdout.write(`   ╰─ Initialising mkcert… `)
 // TODO: Figure out what to do for Windows.
 
 
-const shellScriptTemplate = `#!/bin/bash
-set -e
+const shellScriptTemplate = `
+# Set the environment variable
+$env:CAROOT="${settingsPath}"
+
 # Install mkcert and create the certificate authority
 ${mkcertBinary} -install
 
 # Create the certificates
 ${mkcertBinary} ${certificateDetails}
-
-# Reset file permissions to regular account
-chown -R ${account} ${settingsPath}
 `
 
-fs.writeFileSync('/tmp/install-mkcert.sh', shellScriptTemplate, {mode: 0o755})
+fs.writeFileSync('/tmp/install-mkcert.ps1', shellScriptTemplate, {mode: 0o755})
 
 await (() => {
   return new Promise((resolve, reject) => {
     const options = { name: 'Auto Encrypt Localhost' }
     // Note: mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
-    sudoPrompt.exec(`CAROOT=${settingsPath} /tmp/install-mkcert.sh`, options, function(error, stdout, stderr) {
+    sudoPrompt.exec(`powershell.exe /tmp/install-mkcert.ps1`, options, function(error, stdout, stderr) {
       if (error) reject(error)
       resolve()
     })
