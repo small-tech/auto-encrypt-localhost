@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.0.5] - In progress...
+## [7.0.5] - 2021-03-19
 
 ### Fixed
 
   - Installation on macOS. This was failing because of differences in how the graphical sudo prompt affects file permissions between Linux and macOS.
+
+### Added
+
+  - Re-implemented Windows support (tested/supported only on Windows 10, under Windows Terminal, with PowerShell).
 
 ## [7.0.4] - 2021-03-17
 

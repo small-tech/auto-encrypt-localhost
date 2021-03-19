@@ -152,28 +152,52 @@ process.stdout.write(`   ╰─ Initialising mkcert… `)
 // to only enter their password once instead of multiple times, once for each command
 // (due to how sudo-prompt works), we first create a shell script and then we execute that.
 //
-// TODO: Figure out what to do for Windows.
+// For Windows, we create and use a separate PowerShell script.
 
+let shellScriptTemplate
+let shellScriptFileName
+let shellScriptCommand
 
-const shellScriptTemplate = `#!/bin/bash
-set -e
-# Install mkcert and create the certificate authority
-${mkcertBinary} -install
+const platform = os.platform()
 
-# Create the certificates
-${mkcertBinary} ${certificateDetails}
+if (platform === 'linux' || platform === 'darwin') {
+  shellScriptFileName = 'install-mkcert.sh'
+  shellScriptCommand = `CAROOT=${settingsPath} /tmp/install-mkcert.sh`
+  shellScriptTemplate = `#!/bin/bash
+  set -e
+  # Install mkcert and create the certificate authority
+  ${mkcertBinary} -install
 
-# Reset file permissions to regular account
-chown -R ${account} ${settingsPath}
-`
+  # Create the certificates
+  ${mkcertBinary} ${certificateDetails}
 
-fs.writeFileSync('/tmp/install-mkcert.sh', shellScriptTemplate, {mode: 0o755})
+  # Reset file permissions to regular account
+  chown -R ${account} ${settingsPath}
+  `
+} else if (platform === 'win32') {
+  shellScriptFileName = 'install-mkcert.ps1'
+  shellScriptCommand = 'powershell.exe /tmp/install-mkcert.ps1'
+  shellScriptTemplate = `
+    # Set the environment variable
+    $env:CAROOT="${settingsPath}"
+
+    # Install mkcert and create the certificate authority
+    ${mkcertBinary} -install
+
+    # Create the certificates
+    ${mkcertBinary} ${certificateDetails}
+  `
+} else {
+  throw new Error(`Sorry, this module is not tested or supported on your platform (${platform}).`)
+}
+
+fs.writeFileSync(`/tmp/${shellScriptFileName}`, shellScriptTemplate, {mode: 0o755})
 
 await (() => {
   return new Promise((resolve, reject) => {
     const options = { name: 'Auto Encrypt Localhost' }
     // Note: mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
-    sudoPrompt.exec(`CAROOT=${settingsPath} /tmp/install-mkcert.sh`, options, function(error, stdout, stderr) {
+    sudoPrompt.exec(shellScriptCommand, options, function(error, stdout, stderr) {
       if (error) reject(error)
       resolve()
     })
