@@ -21,7 +21,6 @@
 import https from 'https'
 import os from 'os'
 import path from 'path'
-import childProcess from 'child_process'
 
 import { binaryPath as mkcertBinary } from '../lib/mkcert.js'
 import installCertutil from '../lib/installCertutil.js'
@@ -116,14 +115,6 @@ const allOK = () => {
 // that they can do it manually themselves.
 installCertutil()
 
-// mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
-// We also pass the rest of the system environment to the spawned processes.
-const mkcertProcessOptions = {
-  env: process.env,
-  stdio: 'pipe'     // suppress output
-}
-mkcertProcessOptions.env.CAROOT = settingsPath
-
 // Support all local interfaces so that the machine can be reached over the local network via IPv4.
 // This is very useful for testing with multiple devices over the local area network without needing to expose
 // the machine over the wide area network/Internet using a service like ngrok.
@@ -180,7 +171,9 @@ fs.writeFileSync('/tmp/install-mkcert.sh', shellScriptTemplate, {mode: 0o755})
 
 await (() => {
   return new Promise((resolve, reject) => {
-    sudoPrompt.exec(`/tmp/install-mkcert.sh`, {name: 'Auto Encrypt Localhost'}, function(error, stdout, stderr) {
+    const options = { name: 'Auto Encrypt Localhost' }
+    // Note: mkcert uses the CAROOT environment variable to know where to create/find the certificate authority.
+    sudoPrompt.exec(`CAROOT=${settingsPath} /tmp/install-mkcert.sh`, options, function(error, stdout, stderr) {
       if (error) reject(error)
       resolve()
     })
