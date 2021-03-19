@@ -26,6 +26,7 @@
     "test": "QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
     "test-on-windows": "node test/index.js",
     "coverage": "QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
+    "coverage-on-windows": "c8 'test/**/*.js'",
     "test-debug": "esm-tape-runner 'test/**/*.js' | tap-monkey",
     "coverage-debug": "c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
     "generate-dependency-diagram": "mkdir -p artefacts && node_modules/.bin/depcruise --max-depth 1 --output-type dot index.js | dot -T svg > artefacts/dependency-graph.svg",
