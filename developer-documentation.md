@@ -25,21 +25,23 @@ __Not shown (for clarity):__ third-party Node modules, the `util` namespace with
 
 Generated using [dependency cruiser](https://github.com/sverweij/dependency-cruiser).
 
-To run dependecy cruiser, you will need to [install Graphviz](https://graphviz.org/download/).
+To run dependency cruiser, you will need to [install Graphviz](https://graphviz.org/download/).
 
 ## How it works in more detail
 
-Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/FiloSottile/mkcert/) that:
+Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/FiloSottile/mkcert/) that, at the npm post-install stage:
 
-  * Downloads and uses correct mkcert release binary for you machine on Linux, macOS, and Windows.
+  - Downloads and uses correct mkcert release binary for you machine on Linux, macOS, and Windows.
 
-  * Automatically installs the _certutil_ (nss) dependency on Linux on systems with apt, pacman, yum (untested) and  and on macOS if you have [Homebrew](https://brew.sh) or [MacPorts](https://www.macports.org/) (untested).
+  - Automatically installs the _certutil_ (nss) dependency on Linux on systems with apt, pacman, yum (untested) and  and on macOS if you have [Homebrew](https://brew.sh) or [MacPorts](https://www.macports.org/) (untested).
 
-  * Creates a root Certificate Authority.
+  - Creates a root Certificate Authority.
 
-  * Creates locally-trusted TLS certificates for localhost, 127.0.0.1, and ::1.
+  - Creates locally-trusted TLS certificates for localhost, 127.0.0.1, and ::1.
 
 You can use these certificates for local development without triggering self-signed certificate errors.
+
+At runtime, you can use the library to create your HTTPS servers instead of using the built-in Node.js `https` module.
 
 For more details on how Auto Encrypt Localhost works behind the scenes, please [see the mkcert README](https://github.com/FiloSottile/mkcert/blob/master/README.md).
 
@@ -51,6 +53,12 @@ npm -s test
 
 To see debug output, run `npm -s run test-debug` instead.
 
+On Windows, run the following command instead:
+
+```sh
+npm -s run test-on-windows
+```
+
 ## Coverage
 
 ```sh
@@ -58,6 +66,12 @@ npm -s run coverage
 ```
 
 To see debug output, run `npm -s run coverage-debug` instead.
+
+On Windows, run the following command instead:
+
+```sh
+npm -s run coverage-on-windows
+```
 
 ## Documentation
 
@@ -93,7 +107,7 @@ Use: AutoEncryptLocalhost.https.createServer(…)
 
 #### module.exports.https
 By aliasing the https property to the AutoEncryptLocalhost static class itself, we enable
-people to add AutoEncryptLocalhost to their existing apps by requiring the module
+people to add AutoEncryptLocalhost to their existing apps by importing the module
 and prefixing their https.createServer(…) line with AutoEncryptLocalhost:
 
 **Kind**: static property of [<code>module.exports</code>](#exp_module_@small-tech/auto-encrypt-localhost--module.exports)  
