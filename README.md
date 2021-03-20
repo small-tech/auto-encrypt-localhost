@@ -16,6 +16,8 @@ Tested and supported on:
   - macOS (tested on Big Sur)
   - Windows 10 (tested in Windows Terminal with PowerShell)
 
+(WSL is not supported for certificates at localhost unless you’re running your browser under WSL also).
+
 ## Installation
 
 ```sh
