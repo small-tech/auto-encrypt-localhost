@@ -21,6 +21,7 @@
 import https from 'https'
 import os from 'os'
 import path from 'path'
+import { log, print } from '../lib/util/log.js'
 
 import { version, binaryName } from '../lib/mkcert.js'
 
@@ -72,9 +73,9 @@ async function secureStreamToFile (url, filePath) {
 
 const settingsPath = path.join(os.homedir(), '.small-tech.org', 'auto-encrypt-localhost')
 
-console.log('  🔒️ Auto Encrypt Localhost (postinstall)')
-console.log('  ────────────────────────────────────────────────────────────────────────')
-process.stdout.write(`   ╰─ Installing mkcert v${version} binary… `)
+log('  🔒️ Auto Encrypt Localhost (postinstall)')
+log('  ────────────────────────────────────────────────────────────────────────')
+print(`   ╰─ Installing mkcert v${version} binary… `)
 
 // Delete and recreate the mkcert-bin folder.
 fs.removeSync(settingsPath)
@@ -89,6 +90,6 @@ await secureStreamToFile(binaryRedirectUrl, binaryPath)
 // Make the binary executable.
 fs.chmodSync(binaryPath, 0o755)
 
-process.stdout.write('done.\n')
+print('done.\n')
 
-console.log('  ────────────────────────────────────────────────────────────────────────')
+log('  ────────────────────────────────────────────────────────────────────────')
