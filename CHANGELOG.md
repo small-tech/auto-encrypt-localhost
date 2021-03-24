@@ -18,6 +18,8 @@ Specifically:
   - mkcert is now installed at post-install (which removes the requirement for the graphical sudo prompt, which was using pkexec, which behaves differently to sudo and was creating the certificate material files with the wrong permissions on Linux).
   - root certificate authority and TLS certificates are created as necessary at runtime (while this requires the person to enter their sudo password, the prompt is shown in the command-line as expected unlike [the npm bug that was causing the prompt to be hidden when run in a lifecycle script](https://github.com/npm/cli/issues/2887)).
 
+Also, reduced unpacked size of the package from 83.2KB to 48.7KB by linking to the AGPL license instead of including the full text.
+
 ## [7.0.5] - 2021-03-19
 
 ### Fixed
