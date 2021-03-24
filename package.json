@@ -23,12 +23,13 @@
   ],
   "scripts": {
     "postinstall": "node bin/post-install.js",
-    "test": "QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
+    "unlockSudo": "sudo echo 'Got sudo privileges.\n'",
+    "test": "npm run unlockSudo && QUIET=true esm-tape-runner 'test/**/*.js' | tap-monkey",
     "test-on-windows": "node test/index.js",
-    "coverage": "QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
+    "coverage": "npm run unlockSudo && QUIET=true c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
     "coverage-on-windows": "c8 node .\\test\\index.js",
-    "test-debug": "esm-tape-runner 'test/**/*.js' | tap-monkey",
-    "coverage-debug": "c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
+    "test-debug": "npm run unlockSudo && esm-tape-runner 'test/**/*.js' | tap-monkey",
+    "coverage-debug": "npm run unlockSudo && c8 esm-tape-runner 'test/**/*.js' | tap-monkey",
     "generate-dependency-diagram": "mkdir -p artefacts && node_modules/.bin/depcruise --max-depth 1 --output-type dot index.js | dot -T svg > artefacts/dependency-graph.svg",
     "generate-developer-documentation": "npm run generate-dependency-diagram && node_modules/.bin/jsdoc2md --private --template developer-documentation.hbs --files index.js > developer-documentation.md"
   },
