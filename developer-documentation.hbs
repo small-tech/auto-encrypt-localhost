@@ -33,6 +33,8 @@ Auto Encrypt Localhost is a Node.js wrapper for [mkcert](https://github.com/Filo
 
   - Downloads and uses correct mkcert release binary for you machine on Linux, macOS, and Windows.
 
+And, on first run (or if the root certificate authority or your TLS certificates are missing):
+
   - Automatically installs the _certutil_ (nss) dependency on Linux on systems with apt, pacman, yum (untested) and  and on macOS if you have [Homebrew](https://brew.sh) or [MacPorts](https://www.macports.org/) (untested).
 
   - Creates a root Certificate Authority.
@@ -52,6 +54,8 @@ npm -s test
 ```
 
 To see debug output, run `npm -s run test-debug` instead.
+
+Note that [npm cannot prompt for sudo passwords due to a bug](https://github.com/npm/cli/issues/2887) so you will be prompted for your password prior to the running of the tests in order to unlock sudo while the tests are running.
 
 On Windows, run the following command instead:
 

@@ -4,17 +4,19 @@ Automatically provisions and installs locally-trusted TLS certificates for Node.
 
 ## How it works
 
-At installation time, Auto Encrypt Localhost uses mkcert to create a local certificate authority, adds it to the various trust stores, and uses it to create locally-trusted TLS certificates that are installed in your server.
+At npm package installation time, Auto Encrypt Localhost installs mkcert.
 
-At runtime, you can reach your server via the local loopback addresses (localhost, 127.0.0.1) on the device itself and also from other devices on the local area network by using your device’s external IPv4 address(es).
+At runtime, Auto Encrypt Localhost uses mkcert to create a local certificate authority and add it to the various trust stores. It then uses it to create locally-trusted TLS certificates that are automatically used by your server.
+
+You can reach your server via the local loopback addresses (localhost, 127.0.0.1) on the device itself and also from other devices on the local area network by using your device’s external IPv4 address(es).
 
 ## System requirements
 
 Tested and supported on:
 
-  - Linux (tested with elementary OS Hera)
+  - Linux (tested with elementary OS 5.x/Hera)
   - macOS (tested on Big Sur)
-  - Windows 10 (tested in Windows Terminal with PowerShell)
+  - Windows 10 (tested with Windows Terminal and PowerShell)
 
 (WSL is not supported for certificates at localhost unless you’re running your browser under WSL also).
 
@@ -24,11 +26,7 @@ Tested and supported on:
 npm i @small-tech/auto-encrypt-localhost
 ```
 
-Note that during installation, Auto Encrypt Localhost will create your local certificate authority and install it in the system root store and generate locally-trusted certificates. These actions require elevated privileges. Since [npm does not handle sudo prompts correctly in lifecycle scripts](https://github.com/npm/cli/issues/2887), you will see a graphical sudo prompt pop up to ask you for your adminstrator password. Once you’ve provided it, installation will proceed as normal.
-
-![Screenshot of graphical sudo prompt “Authentication required: Authentication is needed to run /bin/bash as the super user”](https://small-tech.org/images/graphical-sudo-prompt.png)
-
-On Windows, you will also be prompted separately to allow the installation of the certificates.
+Note that during installation, Auto Encrypt Localhost will download and install the correct mkcert binary for your system.
 
 ## Usage
 
@@ -65,7 +63,9 @@ server.listen(443, () => {
 })
 ```
 
-You can now reach your server via https://localhost, https://127.0.0.1, and via its external IPv4 address(es) on your local area network. To find the list of IP addresses that your local server is reachable from, you can run the following code in the Node interpreter:
+On first run, Auto Encrypt Localhost will use mkcert to create your local certificate authority and install it in the system root store and generate locally-trusted certificates. These actions require elevated privileges and you will be prompted for your password unless you have passwordless sudo set up for your system.
+
+Once your server is up and running, you can reach it via https://localhost, https://127.0.0.1, and via its external IPv4 address(es) on your local area network. To find the list of IP addresses that your local server is reachable from, you can run the following code in the Node interpreter:
 
 ```js
 Object.entries(os.networkInterfaces())
@@ -160,8 +160,6 @@ If you’re evaluating this for a “startup” or an enterprise, let us save yo
 ### Windows
 
 Locally-trusted certificates do not work under Firefox. Please use Edge or Chrome on this platform. This is [a mkcert limitation](https://github.com/FiloSottile/mkcert#supported-root-stores).
-
-__Version 7.x is currently not tested under Windows.__ It may not be able to set the executable bit on the binary download if that’s necessary. __This notice will be removed once it’s been tested and confirmed to be working.__
 
 ## Related projects
 
